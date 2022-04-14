@@ -22,4 +22,8 @@ module.exports = {
     'plugin:jest/recommended',
   ],
   ignorePatterns: ['*.js', '*.d.ts', 'node_modules/', '*.generated.ts'],
+  rules: {
+    '@typescript-eslint/no-non-null-assertion': 'off',
+    'jest/expect-expect': 'off',
+  },
 };

@@ -1,16 +1,14 @@
 import { Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-// import * as sqs from 'aws-cdk-lib/aws-sqs';
+import { Encryptor, EncryptorProps } from './encryptor';
+
+export interface SbamNotesStackProps extends StackProps, EncryptorProps {
+}
 
 export class SbamNotesStack extends Stack {
-  constructor(scope: Construct, id: string, props?: StackProps) {
+  constructor(scope: Construct, id: string, props?: SbamNotesStackProps) {
     super(scope, id, props);
 
-    // The code that defines your stack goes here
-
-    // example resource
-    // const queue = new sqs.Queue(this, 'SbamNotesQueue', {
-    //   visibilityTimeout: cdk.Duration.seconds(300)
-    // });
+    new Encryptor(this, 'Encryptor', props);
   }
 }

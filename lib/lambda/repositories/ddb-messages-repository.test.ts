@@ -1,9 +1,8 @@
 import { container } from 'tsyringe';
 import { DDBMessagesRepository } from './ddb-messages-repository';
-import { DDB_CLIENT, DDB_TABLE_NAME } from './types';
 import { mockClient } from 'aws-sdk-client-mock';
-import { DynamoDBDocumentClient, GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
-import { MessageNotFoundError } from './errors';
+import { BatchWriteCommand, DynamoDBDocumentClient, GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { MessageNotFoundError } from '../encryptor/errors';
 
 describe('lambda/encryptor/DDBMessagesRepository', () => {
   const ddbMock = mockClient(DynamoDBDocumentClient);
@@ -12,8 +11,8 @@ describe('lambda/encryptor/DDBMessagesRepository', () => {
   beforeEach(() => {
     ddbMock.reset();
     container.clearInstances();
-    container.register(DDB_TABLE_NAME, { useValue: 'table' });
-    container.register(DDB_CLIENT, { useValue: ddbMock });
+    container.register('DDB_TABLE', { useValue: 'table' });
+    container.register('DDB_CLIENT', { useValue: ddbMock });
     subject = container.resolve(DDBMessagesRepository);
   });
 
@@ -58,6 +57,21 @@ describe('lambda/encryptor/DDBMessagesRepository', () => {
         encrypted: 'foobar',
         authTag: 'lorem',
       });
+    });
+  });
+
+  describe('#delete', () => {
+    it('works', async () => {
+      ddbMock.onAnyCommand().rejects();
+      ddbMock.on(BatchWriteCommand, {
+        RequestItems: {
+          table: [
+            { DeleteRequest: { Key: { id: '1' } } },
+            { DeleteRequest: { Key: { id: '2' } } },
+          ],
+        },
+      });
+      await subject.delete(['1', '2']);
     });
   });
 });

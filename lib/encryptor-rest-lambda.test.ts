@@ -57,9 +57,10 @@ describe('constructs/EncryptorRestLambda', () => {
               'dynamodb:PutItem',
             ],
             Effect: 'Allow',
-            Resource: {
-              'Fn::GetAtt': [tableLogicalId, 'Arn'],
-            },
+            Resource: [
+              { 'Fn::GetAtt': [tableLogicalId, 'Arn'], },
+              { 'Ref': 'AWS::NoValue' },
+            ],
           }],
         },
         Roles: [{ Ref: roleLogicaId }],

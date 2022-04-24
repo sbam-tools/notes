@@ -1,6 +1,7 @@
 import { CfnElement, Stack } from "aws-cdk-lib";
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
+import * as events from 'aws-cdk-lib/aws-events';
 import { cdkTestAppFactory } from '../test/helpers';
 import { EncryptorRestAPI } from "./encryptor-rest-api";
 
@@ -8,6 +9,7 @@ describe('constructs/RestEncryptorAPI', () => {
   let stack: Stack;
   let table: dynamodb.Table;
   let tableLogicalId: string;
+  let eventBus: events.EventBus;
 
   beforeEach(() => {
     const app = cdkTestAppFactory();
@@ -20,11 +22,13 @@ describe('constructs/RestEncryptorAPI', () => {
       },
     });
     tableLogicalId = stack.getLogicalId(table.node.defaultChild as CfnElement);
+    eventBus = new events.EventBus(stack, 'EventBus');
   });
 
   it('defines the encryptor handler', () => {
     new EncryptorRestAPI(stack, 'API', {
       table,
+      eventBus,
     });
     const template = Template.fromStack(stack);
     template.hasResource('AWS::Lambda::Function', {
@@ -43,6 +47,7 @@ describe('constructs/RestEncryptorAPI', () => {
   it('defines the Rest API', () => {
     new EncryptorRestAPI(stack, 'API', {
       table,
+      eventBus,
     });
     const template = Template.fromStack(stack);
     template.hasResource('AWS::ApiGateway::RestApi', {

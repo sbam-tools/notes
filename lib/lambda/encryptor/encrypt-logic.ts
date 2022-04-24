@@ -1,8 +1,9 @@
 import * as crypto from 'crypto';
 import { nanoid } from 'nanoid';
 import { inject, singleton } from 'tsyringe';
-import { DecryptRequest, IEncryptLogic, IEncryptor, IMessagesRepository } from './interfaces';
-import { ENCRYPTOR, MESSAGES_REPOSITORY } from './types';
+import { IMessagesRepository } from '../repositories/interfaces';
+import { EventBridgeService } from '../services/events-service';
+import { DecryptRequest, IEncryptLogic, IEncryptor } from './interfaces';
 
 export interface EncryptResponse {
   id: string;
@@ -12,8 +13,9 @@ export interface EncryptResponse {
 @singleton()
 export class EncryptLogic implements IEncryptLogic {
   constructor(
-    @inject(ENCRYPTOR) private readonly encryptor: IEncryptor,
-    @inject(MESSAGES_REPOSITORY) private readonly repository: IMessagesRepository,
+    @inject('IEncryptor') private readonly encryptor: IEncryptor,
+    @inject('IMessagesRepository') private readonly repository: IMessagesRepository,
+    @inject(EventBridgeService) private readonly eventsService: EventBridgeService,
   ) {}
 
   async encrypt(message: string): Promise<EncryptResponse> {
@@ -34,12 +36,18 @@ export class EncryptLogic implements IEncryptLogic {
     return { id, secret: key.toString('hex') };
   }
 
-  async decrypt({ id, secret }: DecryptRequest): Promise<string | undefined> {
+  async decrypt({ id, secret }: DecryptRequest): Promise<string> {
     const message = await this.repository.find(id);
-    return this.encryptor.decrypt({
+    const decrypted = await this.encryptor.decrypt({
       key: Buffer.from(secret, 'hex'),
       iv: Buffer.from(id),
       ...message
     });
+    try {
+      await this.eventsService.sendMessageDecrypted(id);
+    } catch (e) {
+      console.warn('Cannot publish decrypt event', e);
+    }
+    return decrypted;
   }
 }

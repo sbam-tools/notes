@@ -16,11 +16,6 @@ export interface DecryptParams {
   authTag: string;
 }
 
-export interface IEncryptor {
-  encrypt(request: EncryptParams): EncryptResult;
-  decrypt(request: DecryptParams): string;
-}
-
 export interface DecryptRequest {
   id: string;
   secret: string;
@@ -31,24 +26,12 @@ export interface EncryptResponse {
   secret: string;
 }
 
+export interface IEncryptor {
+  encrypt(request: EncryptParams): EncryptResult;
+  decrypt(request: DecryptParams): string;
+}
+
 export interface IEncryptLogic {
   encrypt(message: string): Promise<EncryptResponse>;
   decrypt(request: DecryptRequest): Promise<string | undefined>;
-}
-
-export interface CreateMessageInput {
-  id: string;
-  encrypted: string;
-  authTag: string;
-  expireAt: Date;
-}
-
-export interface MessageDocument {
-  encrypted: string;
-  authTag: string;
-}
-
-export interface IMessagesRepository {
-  create(message: CreateMessageInput): Promise<void>;
-  find(id: string): Promise<MessageDocument>;
 }

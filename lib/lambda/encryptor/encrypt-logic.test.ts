@@ -1,29 +1,28 @@
 import { container } from "tsyringe";
 import { EncryptLogic } from "./encrypt-logic";
-import { ENCRYPTOR, MESSAGES_REPOSITORY } from "./types";
+import { EventBridgeService } from "../services/events-service";
 
 describe('lambda/encryptor/EncryptLogic', () => {
-  const encryptorEncryptMock = jest.fn();
-  const encryptorDecryptMock = jest.fn();
-  const repositoryCreateMock = jest.fn();
-  const repositoryFindMock = jest.fn();
+  const eventsService = {
+    sendMessageDecrypted: jest.fn(),
+  };
+  const encryptor = {
+    encrypt: jest.fn(),
+    decrypt: jest.fn(),
+  };
+  const messagesRepository = {
+    create: jest.fn(),
+    find: jest.fn(),
+  };
+
   let subject: EncryptLogic;
 
   beforeEach(() => {
     container.reset();
-    jest.clearAllMocks();
-    container.register(ENCRYPTOR, {
-      useValue: {
-        encrypt: encryptorEncryptMock,
-        decrypt: encryptorDecryptMock,
-      },
-    });
-    container.register(MESSAGES_REPOSITORY, {
-      useValue: {
-        create: repositoryCreateMock,
-        find: repositoryFindMock,
-      },
-    });
+    jest.resetAllMocks();
+    container.registerInstance('IEncryptor', encryptor);
+    container.registerInstance('IMessagesRepository', messagesRepository);
+    container.registerInstance<unknown>(EventBridgeService, eventsService);
     subject = container.resolve(EncryptLogic);
   });
 
@@ -31,7 +30,7 @@ describe('lambda/encryptor/EncryptLogic', () => {
     it('creates a message with a generated id and the encrypted version of a message', async () => {
       let generatedId = Buffer.from('');
       let generatedKey = Buffer.from('');
-      encryptorEncryptMock.mockImplementation(({ key, iv, message }) => {
+      encryptor.encrypt.mockImplementation(({ key, iv, message }) => {
         generatedId = iv;
         generatedKey = key;
         expect(key).toHaveLength(32);
@@ -43,7 +42,7 @@ describe('lambda/encryptor/EncryptLogic', () => {
         id: generatedId.toString(),
         secret: generatedKey.toString('hex'),
       });
-      expect(repositoryCreateMock).toBeCalledWith(expect.objectContaining({
+      expect(messagesRepository.create).toBeCalledWith(expect.objectContaining({
         id: generatedId.toString(),
         encrypted: 'encrypted',
         authTag: 'lorem',
@@ -54,17 +53,35 @@ describe('lambda/encryptor/EncryptLogic', () => {
 
   describe('#decrypt', () => {
     it('returns the decrypted version of a message', async () => {
-      repositoryFindMock.mockImplementation((id) => {
+      messagesRepository.find.mockImplementation((id) => {
         expect(id).toEqual('1234');
         return Promise.resolve({ encrypted: 'encrypted', authTag: 'lorem' });
       });
-      encryptorDecryptMock.mockImplementation(({ key, iv, encrypted, authTag }) => {
+      encryptor.decrypt.mockImplementation(({ key, iv, encrypted, authTag }) => {
         expect(key.toString()).toEqual('secret');
         expect(iv.toString()).toEqual('1234');
         expect(encrypted).toEqual('encrypted');
         expect(authTag).toEqual('lorem');
         return 'decrypted';
       });
+      expect(await subject.decrypt({
+        id: '1234',
+        secret: '736563726574',
+      })).toEqual('decrypted');
+    });
+
+    it('enqueues a message decrypted event', async () => {
+      encryptor.decrypt.mockReturnValue('decrypted');
+      await subject.decrypt({
+        id: '1234',
+        secret: '736563726574',
+      });
+      expect(eventsService.sendMessageDecrypted).toHaveBeenCalledWith('1234');
+    });
+
+    it('ignores errors triggered by event publishing', async () => {
+      encryptor.decrypt.mockReturnValue('decrypted');
+      eventsService.sendMessageDecrypted.mockRejectedValue(new Error('asd'));
       expect(await subject.decrypt({
         id: '1234',
         secret: '736563726574',

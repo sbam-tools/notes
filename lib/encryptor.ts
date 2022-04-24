@@ -2,7 +2,9 @@ import { RemovalPolicy } from 'aws-cdk-lib';
 import { Construct } from "constructs";
 import * as logs from 'aws-cdk-lib/aws-logs';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
+import * as events from 'aws-cdk-lib/aws-events';
 import { EncryptorRestAPI } from './encryptor-rest-api';
+import { MessageCleaner } from './message-cleaner';
 
 export interface EncryptorProps {
   removalPolicy?: RemovalPolicy;
@@ -11,10 +13,13 @@ export interface EncryptorProps {
 
 export class Encryptor extends Construct {
   readonly table: dynamodb.Table;
-  readonly apiGateway: EncryptorRestAPI;
+  readonly rest: EncryptorRestAPI;
+  readonly eventBus: events.EventBus;
 
   constructor(scope: Construct, id: string, props?: EncryptorProps) {
     super(scope, id);
+
+    this.eventBus = new events.EventBus(this, 'EventBus');
 
     this.table = new dynamodb.Table(this, 'EncryptedMessagesTable', {
       partitionKey: {
@@ -24,13 +29,22 @@ export class Encryptor extends Construct {
       timeToLiveAttribute: 'TTL',
       removalPolicy: props?.removalPolicy,
     });
-    this.apiGateway = new EncryptorRestAPI(this, 'EncryptorAPI', {
+
+    new MessageCleaner(this, 'MessageCleaner', {
+      eventBus: this.eventBus,
       table: this.table,
+      removalPolicy: props?.removalPolicy,
+      logRetention: props?.logRetention,
+    });
+
+    this.rest = new EncryptorRestAPI(this, 'REST', {
+      table: this.table,
+      eventBus: this.eventBus,
       logRetention: props?.logRetention,
     });
   }
 
   get restEndpoint(): string {
-    return this.apiGateway.restApi.deploymentStage.urlForPath();
+    return this.rest.restApi.deploymentStage.urlForPath();
   }
 }

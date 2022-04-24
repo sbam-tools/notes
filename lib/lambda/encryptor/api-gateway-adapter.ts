@@ -1,27 +1,21 @@
-import 'reflect-metadata';
-import { container, inject, registry, singleton } from 'tsyringe';
+import { inject, registry, singleton } from 'tsyringe';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { IEncryptLogic } from './interfaces';
-import { DDB_CLIENT, DDB_TABLE_NAME, ENCRYPTOR, ENCRYPT_LOGIC, MESSAGES_REPOSITORY } from './types';
-import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
-import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { AESEncryptor } from './aes-encryptor';
 import { EncryptLogic } from './encrypt-logic';
-import { DDBMessagesRepository } from './ddb-messages-repository';
+import { DDBMessagesRepository } from '../repositories/ddb-messages-repository';
 import { DecryptError, MessageNotFoundError } from './errors';
 import { withCors } from '../middlewares';
+import { IEncryptLogic } from './interfaces';
 
 @singleton()
 @registry([
-  { token: DDB_CLIENT, useValue: DynamoDBDocumentClient.from(new DynamoDBClient({})) },
-  { token: DDB_TABLE_NAME, useValue: process.env.TABLE_NAME! },
-  { token: ENCRYPTOR, useClass: AESEncryptor },
-  { token: ENCRYPT_LOGIC, useClass: EncryptLogic },
-  { token: MESSAGES_REPOSITORY, useClass: DDBMessagesRepository },
+  { token: 'IEncryptor', useClass: AESEncryptor },
+  { token: 'IEncryptLogic', useClass: EncryptLogic },
+  { token: 'IMessagesRepository', useClass: DDBMessagesRepository },
 ])
 export class APIGatewayAdapter {
   constructor(
-    @inject(ENCRYPT_LOGIC) private readonly logic: IEncryptLogic
+    @inject('IEncryptLogic') private readonly logic: IEncryptLogic
   ) {}
 
   async execute(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
@@ -79,8 +73,4 @@ export class APIGatewayAdapter {
       throw e;
     }
   }
-}
-
-export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
-  return container.resolve(APIGatewayAdapter).execute(event);
 }

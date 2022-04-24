@@ -1,23 +1,28 @@
+import 'jest-dynalite/withDb';
 import { APIGatewayProxyEvent } from "aws-lambda";
 import { container } from "tsyringe";
 import { APIGatewayAdapter } from "./api-gateway-adapter";
-import { DDB_CLIENT, DDB_TABLE_NAME } from "./types";
-import 'jest-dynalite/withDb';
-import { DynamoDBDocumentClient, GetCommand } from "@aws-sdk/lib-dynamodb";
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { mockClient } from "aws-sdk-client-mock";
+import { EventBridgeClient } from "@aws-sdk/client-eventbridge";
+import { buildLocalDDBClient } from "../../../test/helpers";
 
 describe('[integration] lambda/encryptor/APIGatewayAdapter', () => {
-  const ddbClient = DynamoDBDocumentClient.from(new DynamoDBClient({
-    endpoint: process.env.MOCK_DYNAMODB_ENDPOINT,
-    region: 'local',
-  }));
+  const ddbClient = buildLocalDDBClient();
+  const eventBridgeClient = mockClient(EventBridgeClient);
   let subject: APIGatewayAdapter;
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    container.register(DDB_CLIENT, { useValue: ddbClient });
-    container.register(DDB_TABLE_NAME, { useValue: 'table' });
+    jest.resetAllMocks();
+    container.clearInstances();
+    container.register('DDB_CLIENT', { useValue: ddbClient });
+    container.register('DDB_TABLE', { useValue: 'table' });
+    container.register('EVENT_BRIDGE_CLIENT', { useValue: eventBridgeClient });
+    container.register('EVENT_BUS_NAME', { useValue: '' });
     subject = container.resolve(APIGatewayAdapter);
+  });
+
+  afterAll(() => {
+    ddbClient.destroy();
   });
 
   it('works as expected', async () => {

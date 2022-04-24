@@ -9,6 +9,7 @@ import { AESEncryptor } from './aes-encryptor';
 import { EncryptLogic } from './encrypt-logic';
 import { DDBMessagesRepository } from './ddb-messages-repository';
 import { DecryptError, MessageNotFoundError } from './errors';
+import { withCors } from '../middlewares';
 
 @singleton()
 @registry([
@@ -24,25 +25,27 @@ export class APIGatewayAdapter {
   ) {}
 
   async execute(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
-    try {
-      if (event.path === '/encrypt') {
-        return this.encrypt(event);
-      } else if (event.path === '/decrypt/:id') {
-        return this.decrypt(event);
-      } else {
-        console.error('Unsupported operation', { path: event.path });
+    return withCors(async () => {
+      try {
+        if (event.path.startsWith('/encrypt')) {
+          return this.encrypt(event);
+        } else if (event.path.startsWith('/decrypt')) {
+          return this.decrypt(event);
+        } else {
+          console.error('Unsupported operation', { path: event.path });
+          return {
+            statusCode: 400,
+            body: JSON.stringify('Unsupported operation'),
+          };
+        }
+      } catch (e) {
+        console.error(e);
         return {
-          statusCode: 400,
-          body: JSON.stringify('Unsupported operation'),
+          statusCode: 500,
+          body: JSON.stringify({ message: 'Internal error' }),
         };
       }
-    } catch (e) {
-      console.error(e);
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ message: 'Internal error' }),
-      };
-    }
+    });
   }
 
   private async encrypt(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
@@ -58,7 +61,8 @@ export class APIGatewayAdapter {
   private async decrypt(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
     try {
       const id = event.pathParameters!.id!;
-      const secret = JSON.parse(event.body!).secret;
+      const body = event.isBase64Encoded ? Buffer.from(event.body!, 'base64').toString('utf8') : event.body!;
+      const secret = JSON.parse(body).secret;
       const decrypted = await this.logic.decrypt({ id, secret });
       return {
         statusCode: 200,

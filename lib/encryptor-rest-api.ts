@@ -25,6 +25,13 @@ export class EncryptorRestAPI extends Construct {
       handler: this.encryptorHandler,
       description: 'SBAM Notes Encryptor API',
       restApiName: Names.uniqueId(this),
+      defaultCorsPreflightOptions: {
+        allowOrigins: apigateway.Cors.ALL_ORIGINS,
+        allowMethods: ['OPTIONS', 'POST'],
+      },
+      proxy: false,
     });
+    this.restApi.root.addResource('encrypt').addMethod('POST');
+    this.restApi.root.addResource('decrypt').addResource('{id}').addMethod('POST');
   }
 }

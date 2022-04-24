@@ -2,6 +2,8 @@
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 import { SbamNotesStack } from '../lib/sbam-notes-stack';
+import { RemovalPolicy } from 'aws-cdk-lib';
+import { InputParameterType } from '../lib/input-parameter';
 
 const app = new cdk.App();
 new SbamNotesStack(app, 'SbamNotes', {
@@ -18,4 +20,9 @@ new SbamNotesStack(app, 'SbamNotes', {
   // env: { account: '123456789012', region: 'us-east-1' },
 
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
+  codeStarConnectionArn: {
+    value: '/sbam-notes/codestar-connection-arn',
+    type: InputParameterType.PARAMETER_STORE,
+  },
+  removalPolicy: RemovalPolicy.DESTROY,
 });

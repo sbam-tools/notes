@@ -29,4 +29,8 @@ export class Encryptor extends Construct {
       logRetention: props?.logRetention,
     });
   }
+
+  get restEndpoint(): string {
+    return this.apiGateway.restApi.deploymentStage.urlForPath();
+  }
 }

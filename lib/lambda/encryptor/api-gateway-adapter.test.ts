@@ -39,13 +39,6 @@ describe('[integration] lambda/encryptor/APIGatewayAdapter', () => {
     } as unknown as APIGatewayProxyEvent);
     const { message } = await JSON.parse(decryptResponse.body);
     expect(message).toEqual('lorem ipsum');
-    const persisted = await ddbClient.send(new GetCommand({
-      TableName: 'table',
-      Key: {
-        id,
-      },
-    }));
-    expect(persisted.Item).toBeUndefined();
   });
 
   it('can properly work with base64 input', async () => {

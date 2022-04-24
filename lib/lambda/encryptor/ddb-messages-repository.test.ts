@@ -2,7 +2,7 @@ import { container } from 'tsyringe';
 import { DDBMessagesRepository } from './ddb-messages-repository';
 import { DDB_CLIENT, DDB_TABLE_NAME } from './types';
 import { mockClient } from 'aws-sdk-client-mock';
-import { DeleteCommand, DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { DynamoDBDocumentClient, GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
 import { MessageNotFoundError } from './errors';
 
 describe('lambda/encryptor/DDBMessagesRepository', () => {
@@ -39,14 +39,14 @@ describe('lambda/encryptor/DDBMessagesRepository', () => {
   });
 
   describe('#find', () => {
-    it('throws an error if message deletion does not succeed', async () => {
-      ddbMock.on(DeleteCommand).resolves({});
+    it('throws an error if message cannot be found', async () => {
+      ddbMock.on(GetCommand).resolves({});
       await expect(subject.find('1234')).rejects.toThrowError(MessageNotFoundError);
     });
 
     it('returns the encrypted string if message deletion succeeds', async () => {
-      ddbMock.on(DeleteCommand).resolves({
-        Attributes: {
+      ddbMock.on(GetCommand).resolves({
+        Item: {
           PK: `m#1234`,
           encrypted: 'foobar',
           authTag: 'lorem',

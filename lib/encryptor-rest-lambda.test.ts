@@ -4,7 +4,7 @@ import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import { cdkTestAppFactory } from '../test/helpers';
 import { EncryptorRestLambda } from './encryptor-rest-lambda';
 
-describe('constructs/RestEncryptorLambda', () => {
+describe('constructs/EncryptorRestLambda', () => {
   let stack: Stack;
   let table: dynamodb.Table;
   let tableLogicalId: string;
@@ -53,7 +53,7 @@ describe('constructs/RestEncryptorLambda', () => {
         PolicyDocument: {
           Statement: [{
             Action: [
-              'dynamodb:DeleteItem',
+              'dynamodb:GetItem',
               'dynamodb:PutItem',
             ],
             Effect: 'Allow',

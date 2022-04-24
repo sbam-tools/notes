@@ -1,4 +1,4 @@
-import { DynamoDBDocumentClient, PutCommand, DeleteCommand } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBDocumentClient, PutCommand, DeleteCommand, GetCommand } from "@aws-sdk/lib-dynamodb";
 import { inject, singleton } from 'tsyringe';
 import { MessageNotFoundError } from "./errors";
 import { IMessagesRepository, CreateMessageInput, MessageDocument } from './interfaces';
@@ -25,17 +25,16 @@ export class DDBMessagesRepository implements IMessagesRepository {
   }
 
   async find(id: string): Promise<MessageDocument> {
-    const result = await this.client.send(new DeleteCommand({
+    const result = await this.client.send(new GetCommand({
       TableName: this.tableName,
       Key: {
         id,
       },
-      ReturnValues: 'ALL_OLD',
     }));
-    if (!result.Attributes) {
+    if (!result.Item) {
       throw new MessageNotFoundError(id);
     }
-    const { encrypted, authTag } = result.Attributes!;
+    const { encrypted, authTag } = result.Item!;
     return { encrypted, authTag };
   }
 }

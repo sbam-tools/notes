@@ -21,7 +21,7 @@ export class EncryptorRestLambda extends lambdaNode.NodejsFunction {
     });
     this.addToRolePolicy(new iam.PolicyStatement({
       actions: [
-        'dynamodb:DeleteItem',
+        'dynamodb:GetItem',
         'dynamodb:PutItem',
       ],
       resources: [props.table.tableArn],

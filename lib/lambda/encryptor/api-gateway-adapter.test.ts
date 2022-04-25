@@ -12,8 +12,6 @@ describe('[integration] lambda/encryptor/APIGatewayAdapter', () => {
   let subject: APIGatewayAdapter;
 
   beforeEach(() => {
-    jest.resetAllMocks();
-    container.clearInstances();
     container.register('DDB_CLIENT', { useValue: ddbClient });
     container.register('DDB_TABLE', { useValue: 'table' });
     container.register('EVENT_BRIDGE_CLIENT', { useValue: eventBridgeClient });

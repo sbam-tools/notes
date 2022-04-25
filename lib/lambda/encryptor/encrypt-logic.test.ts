@@ -19,8 +19,6 @@ describe('lambda/encryptor/EncryptLogic', () => {
   let subject: EncryptLogic;
 
   beforeEach(() => {
-    container.reset();
-    jest.resetAllMocks();
     container.registerInstance('IEncryptor', encryptor);
     container.registerInstance('IMessagesRepository', messagesRepository);
     container.registerInstance<unknown>(EventBridgeService, eventsService);

@@ -6,6 +6,7 @@ import { DDBMessagesRepository } from '../repositories/ddb-messages-repository';
 import { DecryptError, MessageNotFoundError } from './errors';
 import { withCors } from '../middlewares';
 import { IEncryptLogic } from './interfaces';
+import { SingletonLogger } from '../singleton-logger';
 
 @singleton()
 @registry([
@@ -15,7 +16,8 @@ import { IEncryptLogic } from './interfaces';
 ])
 export class APIGatewayAdapter {
   constructor(
-    @inject('IEncryptLogic') private readonly logic: IEncryptLogic
+    @inject('IEncryptLogic') private readonly logic: IEncryptLogic,
+    @inject(SingletonLogger) private readonly logger: SingletonLogger,
   ) {}
 
   async execute(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
@@ -26,14 +28,14 @@ export class APIGatewayAdapter {
         } else if (event.path.startsWith('/decrypt')) {
           return this.decrypt(event);
         } else {
-          console.error('Unsupported operation', { path: event.path });
+          this.logger.error('Unsupported operation', { path: event.path });
           return {
             statusCode: 400,
             body: JSON.stringify('Unsupported operation'),
           };
         }
       } catch (e) {
-        console.error(e);
+        this.logger.error('Internal error', e as Error);
         return {
           statusCode: 500,
           body: JSON.stringify({ message: 'Internal error' }),
@@ -64,7 +66,7 @@ export class APIGatewayAdapter {
       };
     } catch (e) {
       if (e instanceof MessageNotFoundError || e instanceof DecryptError) {
-        console.error(e);
+        this.logger.error('Decryption error', e);
         return {
           statusCode: 404,
           body: JSON.stringify({ message: 'Message not found or invalid secret' }),

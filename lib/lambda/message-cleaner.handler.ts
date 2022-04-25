@@ -3,6 +3,7 @@ import { container, inject, registry, singleton } from "tsyringe";
 import { EventBridgeEvent, SQSEvent } from "aws-lambda";
 import { DDBMessagesRepository } from "./repositories/ddb-messages-repository";
 import { IMessagesRepository } from "./repositories/interfaces";
+import { SingletonLogger } from './singleton-logger';
 
 interface MessageDecryptedEventDetail {
   id: string;
@@ -15,6 +16,7 @@ interface MessageDecryptedEventDetail {
 export class SQSAdapter {
   constructor(
     @inject('IMessagesRepository') private readonly repository: IMessagesRepository,
+    @inject(SingletonLogger) private readonly logger: SingletonLogger,
   ) {}
 
   async handle(event: SQSEvent) {
@@ -22,7 +24,7 @@ export class SQSAdapter {
       const event = JSON.parse(r.body) as EventBridgeEvent<'message decrypted', MessageDecryptedEventDetail>
       return event.detail.id;
     });
-    console.log('Deleting messages', { ids })
+    this.logger.info('Deleting messages', { ids });
     await this.repository.delete(ids);
   }
 }

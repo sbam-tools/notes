@@ -11,8 +11,6 @@ describe('[integration] lambda/MessageCleanerHandler', () => {
   let subject: SQSAdapter;
 
   beforeEach(() => {
-    jest.resetAllMocks();
-    container.clearInstances();
     container.register('DDB_CLIENT', { useValue: ddbClient });
     container.register('DDB_TABLE', { useValue: 'table' });
     subject = container.resolve(SQSAdapter);

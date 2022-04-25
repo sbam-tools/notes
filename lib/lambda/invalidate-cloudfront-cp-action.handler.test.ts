@@ -17,8 +17,6 @@ describe('lambda/InvalidateCloudfrontCPAction', () => {
   let subject: CodePipelineAdapter;
 
   beforeEach(() => {
-    container.clearInstances();
-    jest.resetAllMocks();
     container.registerInstance<unknown>(CodePipelineService, codePipelineService);
     container.registerInstance<unknown>(CloudfrontService, cloudfrontService);
     subject = container.resolve(CodePipelineAdapter);

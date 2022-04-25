@@ -4,6 +4,7 @@ import { inject, singleton } from 'tsyringe';
 import { IMessagesRepository } from '../repositories/interfaces';
 import { EventBridgeService } from '../services/events-service';
 import { DecryptRequest, IEncryptLogic, IEncryptor } from './interfaces';
+import { SingletonLogger } from '../singleton-logger';
 
 export interface EncryptResponse {
   id: string;
@@ -16,6 +17,7 @@ export class EncryptLogic implements IEncryptLogic {
     @inject('IEncryptor') private readonly encryptor: IEncryptor,
     @inject('IMessagesRepository') private readonly repository: IMessagesRepository,
     @inject(EventBridgeService) private readonly eventsService: EventBridgeService,
+    @inject(SingletonLogger) private readonly logger: SingletonLogger,
   ) {}
 
   async encrypt(message: string): Promise<EncryptResponse> {
@@ -33,10 +35,11 @@ export class EncryptLogic implements IEncryptLogic {
       expireAt,
       ...result,
     });
+    this.logger.info('Encrypted message', { id });
     try {
       await this.eventsService.sendMessageEncrypted(id);
     } catch (e) {
-      console.warn('Cannot publish encrypt event', e);
+      this.logger.warn('Cannot publish encrypt event', e as Error);
     }
     return { id, secret: key.toString('hex') };
   }
@@ -48,10 +51,11 @@ export class EncryptLogic implements IEncryptLogic {
       iv: Buffer.from(id),
       ...message
     });
+    this.logger.info('Decrypted message', { id });
     try {
       await this.eventsService.sendMessageDecrypted(id);
     } catch (e) {
-      console.warn('Cannot publish decrypt event', e);
+      this.logger.warn('Cannot publish decrypt event', e as Error);
     }
     return decrypted;
   }

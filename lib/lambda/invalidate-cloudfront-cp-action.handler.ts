@@ -3,6 +3,7 @@ import { container, inject, singleton } from 'tsyringe';
 import { CodePipelineEvent } from 'aws-lambda';
 import { CloudfrontService } from './services/cloudfront-service';
 import { CodePipelineService } from './services/codepipeline-service';
+import { SingletonLogger } from './singleton-logger';
 
 interface CodePipelineActionConfig {
   distributionId: string;
@@ -14,6 +15,7 @@ export class CodePipelineAdapter {
   constructor(
     @inject(CloudfrontService) private readonly cloudfront: CloudfrontService,
     @inject(CodePipelineService) private readonly codepipeline: CodePipelineService,
+    @inject(SingletonLogger) private readonly logger: SingletonLogger,
   ) {}
 
   async handle(event: CodePipelineEvent): Promise<void> {
@@ -21,10 +23,11 @@ export class CodePipelineAdapter {
     const jobId = job.id;
     try {
       const params = JSON.parse(job.data.actionConfiguration.configuration.UserParameters) as CodePipelineActionConfig;
+      this.logger.info('Invalidating CDN', { ...params, jobId });
       await this.cloudfront.invalidate(params.distributionId, params.objectPaths, jobId);
       await this.codepipeline.signalJobSuccess(jobId);
     } catch (e) {
-      console.error(e);
+      this.logger.error('Internal error', e as Error);
       await this.codepipeline.signalJobFailure(jobId, e);
     }
   }

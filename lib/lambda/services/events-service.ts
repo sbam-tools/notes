@@ -12,6 +12,19 @@ export class EventBridgeService {
     @inject('EVENT_BUS_NAME') private readonly eventBusName: string,
   ) {}
 
+  async sendMessageEncrypted(id: string): Promise<void> {
+    await this.client.send(new PutEventsCommand({
+      Entries: [{
+        EventBusName: this.eventBusName !== '' ? this.eventBusName : undefined,
+        Source: 'sbam.notes',
+        DetailType: 'message encrypted',
+        Detail: JSON.stringify({
+          id,
+        }),
+      }],
+    }));
+  }
+
   async sendMessageDecrypted(id: string): Promise<void> {
     await this.client.send(new PutEventsCommand({
       Entries: [{

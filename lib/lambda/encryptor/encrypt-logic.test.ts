@@ -5,6 +5,7 @@ import { EventBridgeService } from "../services/events-service";
 describe('lambda/encryptor/EncryptLogic', () => {
   const eventsService = {
     sendMessageDecrypted: jest.fn(),
+    sendMessageEncrypted: jest.fn(),
   };
   const encryptor = {
     encrypt: jest.fn(),
@@ -48,6 +49,21 @@ describe('lambda/encryptor/EncryptLogic', () => {
         authTag: 'lorem',
         expireAt: expect.any(Date),
       }));
+    });
+
+    it('enqueues a message encrypted event', async () => {
+      let generatedId = Buffer.from('');
+      encryptor.encrypt.mockImplementation(({ iv }) => {
+        generatedId = iv;
+        return { encrypted: 'encrypted', authTag: 'lorem' };
+      });
+      await subject.encrypt('lorem');
+      expect(eventsService.sendMessageEncrypted).toHaveBeenCalledWith(generatedId.toString());
+    });
+
+    it('ignores errors triggered by event publishing', async () => {
+      eventsService.sendMessageEncrypted.mockRejectedValue(new Error('asd'));
+      await subject.encrypt('lorem');
     });
   });
 

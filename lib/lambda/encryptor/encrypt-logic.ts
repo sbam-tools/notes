@@ -33,6 +33,11 @@ export class EncryptLogic implements IEncryptLogic {
       expireAt,
       ...result,
     });
+    try {
+      await this.eventsService.sendMessageEncrypted(id);
+    } catch (e) {
+      console.warn('Cannot publish encrypt event', e);
+    }
     return { id, secret: key.toString('hex') };
   }
 

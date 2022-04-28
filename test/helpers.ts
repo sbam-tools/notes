@@ -1,9 +1,9 @@
+import { Logger } from '@aws-lambda-powertools/logger';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import * as cdk from 'aws-cdk-lib';
 import { container } from 'tsyringe';
 import cdkJson = require('../cdk.json');
-import { SingletonLogger } from '../lib/lambda/singleton-logger';
 
 export const testCdkContext = {
   ...cdkJson.context,
@@ -11,7 +11,7 @@ export const testCdkContext = {
 };
 
 export function silenceLogger() {
-  container.registerInstance<unknown>(SingletonLogger, {
+  container.registerInstance<unknown>(Logger, {
     info: jest.fn(),
     warn: jest.fn(),
     error: jest.fn(),
@@ -26,5 +26,5 @@ export function buildLocalDDBClient(): DynamoDBDocumentClient {
   return DynamoDBDocumentClient.from(new DynamoDBClient({
     endpoint: process.env.MOCK_DYNAMODB_ENDPOINT,
     region: 'local',
-  }))
+  }));
 }

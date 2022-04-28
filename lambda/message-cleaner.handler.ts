@@ -1,22 +1,23 @@
 import 'reflect-metadata';
-import { container, inject, registry, singleton } from "tsyringe";
+import { container, inject, Lifecycle, registry, singleton } from "tsyringe";
 import { EventBridgeEvent, SQSEvent } from "aws-lambda";
 import { DDBMessagesRepository } from "./repositories/ddb-messages-repository";
 import { IMessagesRepository } from "./repositories/interfaces";
-import { SingletonLogger } from './singleton-logger';
+import { Logger } from '@aws-lambda-powertools/logger';
 
 interface MessageDecryptedEventDetail {
   id: string;
 }
 
 @registry([
-  { token: 'IMessagesRepository', useClass: DDBMessagesRepository },
+  { token: 'IMessagesRepository', useClass: DDBMessagesRepository, options: { lifecycle: Lifecycle.Singleton } },
+  { token: Logger, useClass: Logger, options: { lifecycle: Lifecycle.Singleton } },
 ])
 @singleton()
 export class SQSAdapter {
   constructor(
     @inject('IMessagesRepository') private readonly repository: IMessagesRepository,
-    @inject(SingletonLogger) private readonly logger: SingletonLogger,
+    @inject(Logger) private readonly logger: Logger,
   ) {}
 
   async handle(event: SQSEvent) {

@@ -1,23 +1,26 @@
+import { Logger } from '@aws-lambda-powertools/logger';
 import * as crypto from 'crypto';
 import { nanoid } from 'nanoid';
-import { inject, singleton } from 'tsyringe';
+import { inject, Lifecycle, registry, singleton } from 'tsyringe';
 import { IMessagesRepository } from '../repositories/interfaces';
 import { EventBridgeService } from '../services/events-service';
 import { DecryptRequest, IEncryptLogic, IEncryptor } from './interfaces';
-import { SingletonLogger } from '../singleton-logger';
 
 export interface EncryptResponse {
   id: string;
   secret: string;
 }
 
+@registry([
+  { token: Logger, useClass: Logger, options: { lifecycle: Lifecycle.Singleton } },
+])
 @singleton()
 export class EncryptLogic implements IEncryptLogic {
   constructor(
     @inject('IEncryptor') private readonly encryptor: IEncryptor,
     @inject('IMessagesRepository') private readonly repository: IMessagesRepository,
     @inject(EventBridgeService) private readonly eventsService: EventBridgeService,
-    @inject(SingletonLogger) private readonly logger: SingletonLogger,
+    @inject(Logger) private readonly logger: Logger,
   ) {}
 
   async encrypt(message: string): Promise<EncryptResponse> {

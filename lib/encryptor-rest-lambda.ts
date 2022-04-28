@@ -14,7 +14,7 @@ export interface EncryptorRestLambdaProps {
 export class EncryptorRestLambda extends lambdaNode.NodejsFunction {
   constructor(scope: Construct, id: string, props: EncryptorRestLambdaProps) {
     super(scope, id, {
-      entry: path.join(__dirname, './lambda/encryptor.handler.ts'),
+      entry: path.join(__dirname, '../lambda/encryptor.handler.ts'),
       environment: {
         TABLE_NAME: props.table.tableName,
         EVENT_BUS_NAME: props.eventBus?.eventBusName || '',

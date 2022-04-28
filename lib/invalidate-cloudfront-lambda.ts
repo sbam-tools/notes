@@ -8,7 +8,7 @@ const INVALIDATE_CLOUDFRONT_HANDLER_ID = 'InvalidateCloudfrontCodePipelineHandle
 export class InvalidateCloudfrontCodePipelineLambda extends lambdaNode.NodejsFunction {
   constructor(scope: Construct, id: string) {
     super(scope, id, {
-      entry: 'lib/lambda/invalidate-cloudfront-cp-action.handler.ts',
+      entry: 'lambda/invalidate-cloudfront-cp-action.handler.ts',
     });
   }
 

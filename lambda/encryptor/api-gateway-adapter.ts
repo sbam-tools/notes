@@ -1,4 +1,4 @@
-import { inject, registry, singleton } from 'tsyringe';
+import { inject, Lifecycle, registry, singleton } from 'tsyringe';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { AESEncryptor } from './aes-encryptor';
 import { EncryptLogic } from './encrypt-logic';
@@ -6,18 +6,19 @@ import { DDBMessagesRepository } from '../repositories/ddb-messages-repository';
 import { DecryptError, MessageNotFoundError } from './errors';
 import { withCors } from '../middlewares';
 import { IEncryptLogic } from './interfaces';
-import { SingletonLogger } from '../singleton-logger';
+import { Logger } from '@aws-lambda-powertools/logger';
 
 @singleton()
 @registry([
-  { token: 'IEncryptor', useClass: AESEncryptor },
-  { token: 'IEncryptLogic', useClass: EncryptLogic },
-  { token: 'IMessagesRepository', useClass: DDBMessagesRepository },
+  { token: 'IEncryptor', useClass: AESEncryptor, options: { lifecycle: Lifecycle.Singleton } },
+  { token: 'IEncryptLogic', useClass: EncryptLogic, options: { lifecycle: Lifecycle.Singleton } },
+  { token: 'IMessagesRepository', useClass: DDBMessagesRepository, options: { lifecycle: Lifecycle.Singleton } },
+  { token: Logger, useClass: Logger, options: { lifecycle: Lifecycle.Singleton } },
 ])
 export class APIGatewayAdapter {
   constructor(
     @inject('IEncryptLogic') private readonly logic: IEncryptLogic,
-    @inject(SingletonLogger) private readonly logger: SingletonLogger,
+    @inject(Logger) private readonly logger: Logger,
   ) {}
 
   async execute(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {

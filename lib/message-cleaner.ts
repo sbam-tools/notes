@@ -36,7 +36,7 @@ export class MessageCleaner extends Construct {
     });
 
     const handler = new lambdaNode.NodejsFunction(this, 'Lambda', {
-      entry: 'lib/lambda/message-cleaner.handler.ts',
+      entry: 'lambda/message-cleaner.handler.ts',
       environment: {
         TABLE_NAME: props.table.tableName,
       },

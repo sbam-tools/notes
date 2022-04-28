@@ -4,7 +4,7 @@ import { container } from "tsyringe";
 import { APIGatewayAdapter } from "./api-gateway-adapter";
 import { mockClient } from "aws-sdk-client-mock";
 import { EventBridgeClient } from "@aws-sdk/client-eventbridge";
-import { buildLocalDDBClient } from "../../../test/helpers";
+import { buildLocalDDBClient } from "../../test/helpers";
 
 describe('[integration] lambda/encryptor/APIGatewayAdapter', () => {
   const ddbClient = buildLocalDDBClient();

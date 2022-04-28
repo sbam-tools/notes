@@ -3,7 +3,7 @@ import { ScanCommand } from "@aws-sdk/client-dynamodb";
 import { BatchWriteCommand } from "@aws-sdk/lib-dynamodb";
 import { SQSEvent } from "aws-lambda";
 import { container } from "tsyringe";
-import { buildLocalDDBClient } from "../../test/helpers";
+import { buildLocalDDBClient } from "../test/helpers";
 import { SQSAdapter } from "./message-cleaner.handler";
 
 describe('[integration] lambda/MessageCleanerHandler', () => {

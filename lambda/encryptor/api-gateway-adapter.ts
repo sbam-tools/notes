@@ -1,20 +1,11 @@
-import { inject, Lifecycle, registry, singleton } from 'tsyringe';
+import { inject, singleton } from 'tsyringe';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { AESEncryptor } from './aes-encryptor';
-import { EncryptLogic } from './encrypt-logic';
-import { DDBMessagesRepository } from '../repositories/ddb-messages-repository';
 import { DecryptError, MessageNotFoundError } from './errors';
 import { withCors } from '../middlewares';
 import { IEncryptLogic } from './interfaces';
 import { Logger } from '@aws-lambda-powertools/logger';
 
 @singleton()
-@registry([
-  { token: 'IEncryptor', useClass: AESEncryptor, options: { lifecycle: Lifecycle.Singleton } },
-  { token: 'IEncryptLogic', useClass: EncryptLogic, options: { lifecycle: Lifecycle.Singleton } },
-  { token: 'IMessagesRepository', useClass: DDBMessagesRepository, options: { lifecycle: Lifecycle.Singleton } },
-  { token: Logger, useClass: Logger, options: { lifecycle: Lifecycle.Singleton } },
-])
 export class APIGatewayAdapter {
   constructor(
     @inject('IEncryptLogic') private readonly logic: IEncryptLogic,
@@ -25,9 +16,9 @@ export class APIGatewayAdapter {
     return withCors(async () => {
       try {
         if (event.path.startsWith('/encrypt')) {
-          return this.encrypt(event);
+          return await this.encrypt(event);
         } else if (event.path.startsWith('/decrypt')) {
-          return this.decrypt(event);
+          return await this.decrypt(event);
         } else {
           this.logger.error('Unsupported operation', { path: event.path });
           return {

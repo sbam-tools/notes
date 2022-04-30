@@ -4,11 +4,12 @@ import * as logs from 'aws-cdk-lib/aws-logs';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as events from 'aws-cdk-lib/aws-events';
 import { MessageCleaner } from './message-cleaner';
-import { EncryptorRestAPI } from './encryptor-rest-api';
+import { EncryptorRestAPI, EncryptorRestAPIDomainProps } from './encryptor-rest-api';
 
 export interface EncryptorProps {
   removalPolicy?: RemovalPolicy;
   logRetention?: logs.RetentionDays;
+  customDomain?: EncryptorRestAPIDomainProps;
 }
 
 export class Encryptor extends Construct {
@@ -41,6 +42,7 @@ export class Encryptor extends Construct {
       table: this.table,
       eventBus: this.eventBus,
       logRetention: props?.logRetention,
+      customDomain: props?.customDomain,
     });
   }
 

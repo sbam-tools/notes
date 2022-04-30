@@ -21,8 +21,25 @@ new SbamNotesStack(app, 'SbamNotes', {
 
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
   codeStarConnectionArn: {
-    value: '/sbam-notes/codestar-connection-arn',
+    value: '/sbam/codestar-connection-arn',
     type: InputParameterType.PARAMETER_STORE,
   },
-  removalPolicy: RemovalPolicy.DESTROY,
+  customDomain: {
+    hostedZoneId: {
+      value: '/sbam/hosted-zone-id',
+      type: InputParameterType.PARAMETER_STORE,
+    },
+    hostedZoneName: {
+      value: '/sbam/hosted-zone-name',
+      type: InputParameterType.PARAMETER_STORE,
+    },
+    apiSubdomain: {
+      value: '/sbam/notes/api-domain-name',
+      type: InputParameterType.PARAMETER_STORE,
+    },
+    frontendSubdomain: {
+      value: '/sbam/notes/frontend-domain-name',
+      type: InputParameterType.PARAMETER_STORE,
+    },
+  },
 });

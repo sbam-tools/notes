@@ -5,14 +5,13 @@ import * as cf from 'aws-cdk-lib/aws-cloudfront';
 import * as cfOrigins from 'aws-cdk-lib/aws-cloudfront-origins';
 import { RemovalPolicy } from "aws-cdk-lib";
 import { FrontendPipeline } from "./frontend-pipeline";
-import { InputParameter } from "./input-parameter";
 import { SPACloudfrontFunction } from "./spa-routing-cloudfront-function";
 
 export interface FrontendProps {
   removalPolicy?: RemovalPolicy;
   logRetention?: logs.RetentionDays;
   apiEndpoint: string;
-  codeStarConnectionArn: InputParameter;
+  codeStarConnectionArn: string;
   repository?: string;
   branch?: string;
 }

@@ -6,10 +6,9 @@ import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
 import { Annotations, Duration, RemovalPolicy } from "aws-cdk-lib";
 import { FrontendBuildProject } from "./frontend-build-project";
 import { InvalidateCloudfrontCodepipelineAction } from "./invalidate-cloudfront-codepipeline-action";
-import { InputParameter, parseInputParameter } from "./input-parameter";
 
 export interface FrontendPipelineProps {
-  codeStarConnectionArn: InputParameter;
+  codeStarConnectionArn: string;
   repository?: string;
   branch?: string;
   apiEndpoint: string;
@@ -41,7 +40,7 @@ export class FrontendPipeline extends cp.Pipeline {
     const sourceArtifact = new cp.Artifact('Source');
     this.stage('Source').addAction(new cpActions.CodeStarConnectionsSourceAction({
       actionName: 'Source',
-      connectionArn: parseInputParameter(this, 'CodeStarConnectionArn', props.codeStarConnectionArn),
+      connectionArn: props.codeStarConnectionArn,
       output: sourceArtifact,
       owner: repositoryParts[0],
       repo: repositoryParts[1],

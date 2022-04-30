@@ -1,0 +1,34 @@
+{
+    "type": "object",
+    "required": ["headers", "body", "pathParameters"],
+    "properties": {
+      "headers": {
+        "type": "object",
+        "required": ["content-type"],
+        "properties": {
+          "content-type": {
+            "enum": ["application/json"]
+          }
+        }
+      },
+      "pathParameters": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        }
+      },
+      "body": {
+        "type": "object",
+        "required": ["secret"],
+        "properties": {
+          "secret": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+  

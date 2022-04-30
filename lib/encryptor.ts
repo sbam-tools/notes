@@ -3,8 +3,8 @@ import { Construct } from "constructs";
 import * as logs from 'aws-cdk-lib/aws-logs';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as events from 'aws-cdk-lib/aws-events';
-import { EncryptorRestAPI } from './encryptor-rest-api';
 import { MessageCleaner } from './message-cleaner';
+import { EncryptorRestAPI } from './encryptor-rest-api';
 
 export interface EncryptorProps {
   removalPolicy?: RemovalPolicy;

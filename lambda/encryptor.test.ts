@@ -31,6 +31,7 @@ describe('[integration] lambda/encryptor', () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        httpMethod: 'POST',
       } as unknown as APIGatewayProxyEvent,
       {} as Context,
     );
@@ -47,10 +48,49 @@ describe('[integration] lambda/encryptor', () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        httpMethod: 'POST',
       } as unknown as APIGatewayProxyEvent,
       {} as Context,
     );
     const { message } = await JSON.parse(decryptResponse.body);
     expect(message).toEqual('lorem ipsum');
+  });
+
+  it('returns cors headers', async () => {
+    const encryptResponse = await encryptHandler(
+      {
+        path: '/encrypt',
+        body: JSON.stringify({
+          message: 'lorem ipsum',
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          Origin: 'https://notes.sbam.dev',
+        },
+        httpMethod: 'POST',
+      } as unknown as APIGatewayProxyEvent,
+      {} as Context,
+    );
+    expect(encryptResponse.statusCode).toEqual(200);
+    expect(encryptResponse.headers!['Access-Control-Allow-Origin']).toEqual('*');
+  });
+
+  it('returns cors headers for errors too', async () => {
+    const encryptResponse = await encryptHandler(
+      {
+        path: '/encrypt',
+        body: JSON.stringify({
+          message: 'lorem ipsum',
+        }),
+        headers: {
+          'Content-Type': 'text/plain',
+          Origin: 'https://notes.sbam.dev',
+        },
+        httpMethod: 'POST',
+      } as unknown as APIGatewayProxyEvent,
+      {} as Context,
+    );
+    expect(encryptResponse.statusCode).toEqual(400);
+    expect(encryptResponse.headers!['Access-Control-Allow-Origin']).toEqual('*');
   });
 });

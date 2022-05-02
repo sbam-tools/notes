@@ -20,11 +20,11 @@ export default function middify(fn: APIGatewayHandler, inputSchema: Record<strin
     .use(jsonBodyParser())
     .use(requestValidator({ inputSchema }))
     .use(renderValidatorErrorMiddleware())
+    .use(httpCors())
     .use(
       httpErrorHandler({
         logger: (e) => container.resolve(Logger).error(e),
         fallbackMessage: 'Internal error',
       }),
-    )
-    .use(httpCors());
+    );
 }

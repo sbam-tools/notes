@@ -76,7 +76,7 @@ describe('lambda/encryptor/rest-api.handlers', () => {
         {} as Context,
       );
       expect(encryptResponse.statusCode).toEqual(404);
-      expect(encryptResponse.body).toEqual('Message not found or invalid secret');
+      expect(JSON.parse(encryptResponse.body).reason).toEqual('Message not found or invalid secret');
     });
 
     it('returns a 404 if encryption logic raises a DecryptError', async () => {
@@ -95,7 +95,7 @@ describe('lambda/encryptor/rest-api.handlers', () => {
         {} as Context,
       );
       expect(encryptResponse.statusCode).toEqual(404);
-      expect(encryptResponse.body).toEqual('Message not found or invalid secret');
+      expect(JSON.parse(encryptResponse.body).reason).toEqual('Message not found or invalid secret');
     });
 
     it('returns a 500 error if decryption fails for unknown reasons', async () => {
@@ -193,9 +193,7 @@ describe('lambda/encryptor/rest-api.handlers', () => {
         {} as Context,
       );
       expect(encryptResponse.statusCode).toEqual(400);
-      expect(encryptResponse.body).toEqual(
-        'Validation error: /headers/content-type must be equal to one of the allowed values',
-      );
+      expect(JSON.parse(encryptResponse.body).reason).toEqual('Event object failed validation');
     });
 
     it('returns an error if request body is malformed', async () => {
@@ -212,7 +210,7 @@ describe('lambda/encryptor/rest-api.handlers', () => {
         {} as Context,
       );
       expect(encryptResponse.statusCode).toEqual(400);
-      expect(encryptResponse.body).toEqual('Validation error: /body must have required property message');
+      expect(JSON.parse(encryptResponse.body).reason).toEqual('Event object failed validation');
     });
 
     it('returns a 500 error if encryption fails', async () => {

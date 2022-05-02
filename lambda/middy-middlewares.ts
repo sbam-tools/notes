@@ -18,17 +18,20 @@ interface Request<TEvent = any, TResult = any, TErr = PossiblyDetailedError, TCt
   };
 }
 
-class RenderValidatorErrorMiddleware implements MiddlewareObj {
+class ErrorResponseInJsonMiddleware implements MiddlewareObj {
   static create() {
-    return new RenderValidatorErrorMiddleware();
+    return new ErrorResponseInJsonMiddleware();
   }
 
-  async onError(request: Request) {
-    if (request.error && request.error.details) {
-      const detail = request.error.details[0];
-      request.error.message = `Validation error: ${detail.instancePath} ${detail.message}`;
+  onError = async (request: Request) => {
+    if (request.error) {
+      if (request.error.details) {
+        request.error.message = JSON.stringify({ reason: request.error.message, details: request.error.details });
+      } else {
+        request.error.message = JSON.stringify({ reason: request.error.message });
+      }
     }
-  }
+  };
 }
 
-export const renderValidatorErrorMiddleware = RenderValidatorErrorMiddleware.create;
+export const errorResponseInJsonMiddleware = ErrorResponseInJsonMiddleware.create;

@@ -8,7 +8,7 @@ import httpHeaderNormalizer from '@middy/http-header-normalizer';
 import jsonBodyParser from '@middy/http-json-body-parser';
 import requestValidator from '@middy/validator';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { renderValidatorErrorMiddleware } from '../middy-middlewares';
+import { errorResponseInJsonMiddleware } from '../middy-middlewares';
 
 type APIGatewayHandler = (event: APIGatewayProxyEvent) => Promise<APIGatewayProxyResult>;
 
@@ -19,7 +19,7 @@ export default function middify(fn: APIGatewayHandler, inputSchema: Record<strin
     .use(httpHeaderNormalizer())
     .use(jsonBodyParser())
     .use(requestValidator({ inputSchema }))
-    .use(renderValidatorErrorMiddleware())
+    .use(errorResponseInJsonMiddleware())
     .use(httpCors())
     .use(
       httpErrorHandler({

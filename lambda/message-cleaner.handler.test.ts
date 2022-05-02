@@ -1,10 +1,10 @@
+import { container } from 'tsyringe';
+import { ScanCommand } from '@aws-sdk/client-dynamodb';
+import { BatchWriteCommand } from '@aws-sdk/lib-dynamodb';
+import { SQSEvent } from 'aws-lambda';
 import 'jest-dynalite/withDb';
-import { ScanCommand } from "@aws-sdk/client-dynamodb";
-import { BatchWriteCommand } from "@aws-sdk/lib-dynamodb";
-import { SQSEvent } from "aws-lambda";
-import { container } from "tsyringe";
-import { buildLocalDDBClient } from "../test/helpers";
-import { SQSAdapter } from "./message-cleaner.handler";
+import { buildLocalDDBClient } from '../test/helpers';
+import { SQSAdapter } from './message-cleaner.handler';
 
 describe('[integration] lambda/MessageCleanerHandler', () => {
   const ddbClient = buildLocalDDBClient();
@@ -21,44 +21,51 @@ describe('[integration] lambda/MessageCleanerHandler', () => {
   });
 
   it('works as expected', async () => {
-    await ddbClient.send(new BatchWriteCommand({
-      RequestItems: {
-        table: [{
-          PutRequest: {
-            Item: {
-              id: '1',
+    await ddbClient.send(
+      new BatchWriteCommand({
+        RequestItems: {
+          table: [
+            {
+              PutRequest: {
+                Item: {
+                  id: '1',
+                },
+              },
             },
-          },
-        }, {
-          PutRequest: {
-            Item: {
-              id: '2',
+            {
+              PutRequest: {
+                Item: {
+                  id: '2',
+                },
+              },
             },
-          },
-        }],
-      },
-    }));
+          ],
+        },
+      }),
+    );
     await subject.handle({
       Records: [
         {
           body: JSON.stringify({
             detail: {
               id: '1',
-            }
+            },
           }),
         },
         {
           body: JSON.stringify({
             detail: {
               id: '2',
-            }
+            },
           }),
         },
       ],
     } as SQSEvent);
-    const items = await ddbClient.send(new ScanCommand({
-      TableName: 'table',
-    }));
+    const items = await ddbClient.send(
+      new ScanCommand({
+        TableName: 'table',
+      }),
+    );
     expect(items.Count).toEqual(0);
   });
 });

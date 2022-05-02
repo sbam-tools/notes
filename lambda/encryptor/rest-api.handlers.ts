@@ -1,16 +1,16 @@
+import 'reflect-metadata';
+import { container, inject, Lifecycle, registry, singleton } from 'tsyringe';
 import { Logger } from '@aws-lambda-powertools/logger';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import 'reflect-metadata';
-import { container, inject, Lifecycle, registry, singleton } from "tsyringe";
+import createError from 'http-errors';
+import decryptInputSchema from '../../schemas/encryptor/decrypt.input.schema.json';
+import encryptInputSchema from '../../schemas/encryptor/encrypt.input.schema.json';
 import { DDBMessagesRepository } from '../repositories/ddb-messages-repository';
 import { AESEncryptor } from './aes-encryptor';
 import { EncryptLogic } from './encrypt-logic';
+import { DecryptError, MessageNotFoundError } from './errors';
 import { IEncryptLogic } from './interfaces';
 import middify from './middify';
-import createError from 'http-errors';
-import encryptInputSchema from '../../schemas/encryptor/encrypt.input.schema.json';
-import decryptInputSchema from '../../schemas/encryptor/decrypt.input.schema.json';
-import { DecryptError, MessageNotFoundError } from './errors';
 
 interface EncryptRequestBody {
   message: string;
@@ -28,9 +28,7 @@ interface DecryptRequestBody {
   { token: Logger, useValue: new Logger() },
 ])
 class RestAPIHandlers {
-  constructor(
-    @inject('IEncryptLogic') private readonly encryptLogic: IEncryptLogic,
-  ) {}
+  constructor(@inject('IEncryptLogic') private readonly encryptLogic: IEncryptLogic) {}
 
   async encrypt(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
     const { message } = event.body as unknown as EncryptRequestBody;

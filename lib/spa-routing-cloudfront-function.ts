@@ -1,5 +1,5 @@
-import { Construct } from 'constructs';
 import * as cf from 'aws-cdk-lib/aws-cloudfront';
+import { Construct } from 'constructs';
 
 const CODE = `function handler(event) {
   var request = event.request;

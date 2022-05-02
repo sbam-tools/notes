@@ -1,7 +1,7 @@
-import { Stack } from "aws-cdk-lib";
+import { Stack } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import { cdkTestAppFactory } from '../test/helpers';
-import { Encryptor } from "./encryptor";
+import { Encryptor } from './encryptor';
 
 describe('constructs/Encryptor', () => {
   let stack: Stack;
@@ -16,14 +16,18 @@ describe('constructs/Encryptor', () => {
     const template = Template.fromStack(stack);
     template.hasResource('AWS::DynamoDB::Table', {
       Properties: {
-        KeySchema: [{
-          AttributeName: 'id',
-          KeyType: 'HASH'
-        }],
-        AttributeDefinitions: [{
-          AttributeName: 'id',
-          AttributeType: 'S'
-        }],
+        KeySchema: [
+          {
+            AttributeName: 'id',
+            KeyType: 'HASH',
+          },
+        ],
+        AttributeDefinitions: [
+          {
+            AttributeName: 'id',
+            AttributeType: 'S',
+          },
+        ],
         TimeToLiveSpecification: {
           AttributeName: 'TTL',
           Enabled: true,

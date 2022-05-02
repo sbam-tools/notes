@@ -1,8 +1,9 @@
+import { container } from 'tsyringe';
 import { Logger } from '@aws-lambda-powertools/logger';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import * as cdk from 'aws-cdk-lib';
-import { container } from 'tsyringe';
+
 import cdkJson = require('../cdk.json');
 
 export const testCdkContext = {
@@ -24,8 +25,10 @@ export function cdkTestAppFactory(): cdk.App {
 }
 
 export function buildLocalDDBClient(): DynamoDBDocumentClient {
-  return DynamoDBDocumentClient.from(new DynamoDBClient({
-    endpoint: process.env.MOCK_DYNAMODB_ENDPOINT,
-    region: 'local',
-  }));
+  return DynamoDBDocumentClient.from(
+    new DynamoDBClient({
+      endpoint: process.env.MOCK_DYNAMODB_ENDPOINT,
+      region: 'local',
+    }),
+  );
 }

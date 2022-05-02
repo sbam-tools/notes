@@ -1,9 +1,9 @@
 import 'reflect-metadata';
-import { container, inject, Lifecycle, registry, singleton } from "tsyringe";
-import { EventBridgeEvent, SQSEvent } from "aws-lambda";
-import { DDBMessagesRepository } from "./repositories/ddb-messages-repository";
-import { IMessagesRepository } from "./repositories/interfaces";
+import { container, inject, Lifecycle, registry, singleton } from 'tsyringe';
 import { Logger } from '@aws-lambda-powertools/logger';
+import { EventBridgeEvent, SQSEvent } from 'aws-lambda';
+import { DDBMessagesRepository } from './repositories/ddb-messages-repository';
+import { IMessagesRepository } from './repositories/interfaces';
 
 interface MessageDecryptedEventDetail {
   id: string;
@@ -21,8 +21,8 @@ export class SQSAdapter {
   ) {}
 
   async handle(event: SQSEvent) {
-    const ids = event.Records.map(r => {
-      const event = JSON.parse(r.body) as EventBridgeEvent<'message decrypted', MessageDecryptedEventDetail>
+    const ids = event.Records.map((r) => {
+      const event = JSON.parse(r.body) as EventBridgeEvent<'message decrypted', MessageDecryptedEventDetail>;
       return event.detail.id;
     });
     this.logger.info('Deleting messages', { ids });

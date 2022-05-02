@@ -1,5 +1,5 @@
-import * as crypto from 'crypto';
 import { singleton } from 'tsyringe';
+import * as crypto from 'crypto';
 import { DecryptError } from './errors';
 import { DecryptParams, EncryptParams, EncryptResult, IEncryptor } from './interfaces';
 

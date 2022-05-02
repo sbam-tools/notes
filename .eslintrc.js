@@ -7,6 +7,7 @@ module.exports = {
     '@typescript-eslint',
     'import',
     'jest',
+    'prettier',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -20,10 +21,12 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:import/typescript',
     'plugin:jest/recommended',
+    'prettier',
   ],
   ignorePatterns: ['*.js', '*.d.ts', 'node_modules/', '*.generated.ts'],
   rules: {
     '@typescript-eslint/no-non-null-assertion': 'off',
     'jest/expect-expect': 'off',
+    'prettier/prettier': 'error',
   },
 };

@@ -1,11 +1,11 @@
-import { Construct } from "constructs";
-import * as logs from 'aws-cdk-lib/aws-logs';
-import * as s3 from 'aws-cdk-lib/aws-s3';
+import { RemovalPolicy } from 'aws-cdk-lib';
 import * as cf from 'aws-cdk-lib/aws-cloudfront';
 import * as cfOrigins from 'aws-cdk-lib/aws-cloudfront-origins';
-import { RemovalPolicy } from "aws-cdk-lib";
-import { FrontendPipeline } from "./frontend-pipeline";
-import { SPACloudfrontFunction } from "./spa-routing-cloudfront-function";
+import * as logs from 'aws-cdk-lib/aws-logs';
+import * as s3 from 'aws-cdk-lib/aws-s3';
+import { Construct } from 'constructs';
+import { FrontendPipeline } from './frontend-pipeline';
+import { SPACloudfrontFunction } from './spa-routing-cloudfront-function';
 
 export interface FrontendProps {
   removalPolicy?: RemovalPolicy;
@@ -37,8 +37,8 @@ export class Frontend extends Construct {
           {
             eventType: cf.FunctionEventType.VIEWER_REQUEST,
             function: new SPACloudfrontFunction(this, 'RoutingFunction'),
-          }
-        ]
+          },
+        ],
       },
       defaultRootObject: 'index.html',
     });
@@ -51,6 +51,6 @@ export class Frontend extends Construct {
       repository: props.repository,
       branch: props.branch,
       removalPolicy: props.removalPolicy,
-    })
+    });
   }
 }

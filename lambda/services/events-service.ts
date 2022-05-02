@@ -1,5 +1,5 @@
-import { EventBridgeClient, PutEventsCommand } from "@aws-sdk/client-eventbridge";
-import { inject, registry, singleton } from "tsyringe";
+import { inject, registry, singleton } from 'tsyringe';
+import { EventBridgeClient, PutEventsCommand } from '@aws-sdk/client-eventbridge';
 
 @singleton()
 @registry([
@@ -13,28 +13,36 @@ export class EventBridgeService {
   ) {}
 
   async sendMessageEncrypted(id: string): Promise<void> {
-    await this.client.send(new PutEventsCommand({
-      Entries: [{
-        EventBusName: this.eventBusName !== '' ? this.eventBusName : undefined,
-        Source: 'sbam.notes',
-        DetailType: 'message encrypted',
-        Detail: JSON.stringify({
-          id,
-        }),
-      }],
-    }));
+    await this.client.send(
+      new PutEventsCommand({
+        Entries: [
+          {
+            EventBusName: this.eventBusName !== '' ? this.eventBusName : undefined,
+            Source: 'sbam.notes',
+            DetailType: 'message encrypted',
+            Detail: JSON.stringify({
+              id,
+            }),
+          },
+        ],
+      }),
+    );
   }
 
   async sendMessageDecrypted(id: string): Promise<void> {
-    await this.client.send(new PutEventsCommand({
-      Entries: [{
-        EventBusName: this.eventBusName !== '' ? this.eventBusName : undefined,
-        Source: 'sbam.notes',
-        DetailType: 'message decrypted',
-        Detail: JSON.stringify({
-          id,
-        }),
-      }],
-    }));
+    await this.client.send(
+      new PutEventsCommand({
+        Entries: [
+          {
+            EventBusName: this.eventBusName !== '' ? this.eventBusName : undefined,
+            Source: 'sbam.notes',
+            DetailType: 'message decrypted',
+            Detail: JSON.stringify({
+              id,
+            }),
+          },
+        ],
+      }),
+    );
   }
 }

@@ -1,8 +1,8 @@
-import { CodePipelineEvent } from "aws-lambda";
-import { container } from "tsyringe";
-import { CodePipelineAdapter } from "./invalidate-cloudfront-cp-action.handler";
-import { CloudfrontService } from "./services/cloudfront-service";
-import { CodePipelineService } from "./services/codepipeline-service";
+import { container } from 'tsyringe';
+import { CodePipelineEvent } from 'aws-lambda';
+import { CodePipelineAdapter } from './invalidate-cloudfront-cp-action.handler';
+import { CloudfrontService } from './services/cloudfront-service';
+import { CodePipelineService } from './services/codepipeline-service';
 
 describe('lambda/InvalidateCloudfrontCPAction', () => {
   const codePipelineService = {
@@ -12,7 +12,7 @@ describe('lambda/InvalidateCloudfrontCPAction', () => {
 
   const cloudfrontService = {
     invalidate: jest.fn(),
-  }
+  };
 
   let subject: CodePipelineAdapter;
 
@@ -24,7 +24,7 @@ describe('lambda/InvalidateCloudfrontCPAction', () => {
 
   it('invalidates cloudfront and notifies success', async () => {
     await subject.handle({
-      "CodePipeline.job": {
+      'CodePipeline.job': {
         id: '1234',
         data: {
           actionConfiguration: {
@@ -45,7 +45,7 @@ describe('lambda/InvalidateCloudfrontCPAction', () => {
   it('notifies failure if cloudfront invalidation fails', async () => {
     cloudfrontService.invalidate.mockRejectedValue('lorem');
     await subject.handle({
-      "CodePipeline.job": {
+      'CodePipeline.job': {
         id: '1234',
         data: {
           actionConfiguration: {

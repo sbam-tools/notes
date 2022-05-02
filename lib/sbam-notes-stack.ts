@@ -1,8 +1,8 @@
-import { Construct } from 'constructs';
 import { RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
 import * as logs from 'aws-cdk-lib/aws-logs';
 import * as r53 from 'aws-cdk-lib/aws-route53';
-import { Encryptor, EncryptorProps } from './encryptor';
+import { Construct } from 'constructs';
+import { Encryptor } from './encryptor';
 import { Frontend } from './frontend';
 import { InputParameter, parseInputParameter } from './input-parameter';
 
@@ -47,7 +47,9 @@ export class SbamNotesStack extends Stack {
     new Frontend(this, 'Frontend', {
       logRetention,
       removalPolicy,
-      apiEndpoint: customDomain ? `https://${customDomain.apiSubdomain}.${customDomain.hostedZone.zoneName}` : encryptor.restEndpoint,
+      apiEndpoint: customDomain
+        ? `https://${customDomain.apiSubdomain}.${customDomain.hostedZone.zoneName}`
+        : encryptor.restEndpoint,
       codeStarConnectionArn,
       repository: props.frontend?.repository,
       branch: props.frontend?.branch,

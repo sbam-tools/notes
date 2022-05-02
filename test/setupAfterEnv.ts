@@ -1,5 +1,5 @@
-import { container } from "tsyringe"
-import { silenceLogger } from "./helpers";
+import { container } from 'tsyringe';
+import { silenceLogger } from './helpers';
 
 beforeEach(() => {
   container.clearInstances();

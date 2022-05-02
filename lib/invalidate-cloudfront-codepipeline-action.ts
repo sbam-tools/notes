@@ -1,9 +1,9 @@
-import { Construct } from 'constructs';
-import * as cpActions from 'aws-cdk-lib/aws-codepipeline-actions';
-import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
-import * as iam from 'aws-cdk-lib/aws-iam';
-import { InvalidateCloudfrontCodePipelineLambda } from './invalidate-cloudfront-lambda';
 import { Stack } from 'aws-cdk-lib';
+import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
+import * as cpActions from 'aws-cdk-lib/aws-codepipeline-actions';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import { Construct } from 'constructs';
+import { InvalidateCloudfrontCodePipelineLambda } from './invalidate-cloudfront-lambda';
 
 export interface InvalidateCloudfrontCodepipelineActionProps {
   actionName: string;
@@ -22,16 +22,18 @@ export class InvalidateCloudfrontCodepipelineAction extends cpActions.LambdaInvo
         objectPaths: props.objectPathsToInvalidate ?? ['/*'],
       },
     });
-    lambda.addToRolePolicy(new iam.PolicyStatement({
-      actions: ['cloudfront:CreateInvalidation'],
-      resources: [
-        Stack.of(scope).formatArn({
-          service: 'cloudfront',
-          region: '',
-          resource: 'distribution',
-          resourceName: props.distribution.distributionId,
-        }),
-      ],
-    }));
+    lambda.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ['cloudfront:CreateInvalidation'],
+        resources: [
+          Stack.of(scope).formatArn({
+            service: 'cloudfront',
+            region: '',
+            resource: 'distribution',
+            resourceName: props.distribution.distributionId,
+          }),
+        ],
+      }),
+    );
   }
 }

@@ -1,8 +1,8 @@
 import { container } from 'tsyringe';
-import { DDBMessagesRepository } from './ddb-messages-repository';
-import { mockClient } from 'aws-sdk-client-mock';
 import { BatchWriteCommand, DynamoDBDocumentClient, GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { mockClient } from 'aws-sdk-client-mock';
 import { MessageNotFoundError } from '../encryptor/errors';
+import { DDBMessagesRepository } from './ddb-messages-repository';
 
 describe('lambda/encryptor/DDBMessagesRepository', () => {
   const ddbMock = mockClient(DynamoDBDocumentClient);
@@ -25,15 +25,17 @@ describe('lambda/encryptor/DDBMessagesRepository', () => {
         expireAt: new Date(2022, 1, 1),
       });
       expect(ddbMock.calls()).toHaveLength(1);
-      expect(ddbMock.commandCalls(PutCommand, {
-        TableName: 'table',
-        Item: {
-          encrypted: 'foobar',
-          authTag: 'lorem',
-          id: '1234',
-          TTL: 1643670000,
-        },
-      })).toHaveLength(1);
+      expect(
+        ddbMock.commandCalls(PutCommand, {
+          TableName: 'table',
+          Item: {
+            encrypted: 'foobar',
+            authTag: 'lorem',
+            id: '1234',
+            TTL: 1643670000,
+          },
+        }),
+      ).toHaveLength(1);
     });
   });
 
@@ -65,10 +67,7 @@ describe('lambda/encryptor/DDBMessagesRepository', () => {
       ddbMock.onAnyCommand().rejects();
       ddbMock.on(BatchWriteCommand, {
         RequestItems: {
-          table: [
-            { DeleteRequest: { Key: { id: '1' } } },
-            { DeleteRequest: { Key: { id: '2' } } },
-          ],
+          table: [{ DeleteRequest: { Key: { id: '1' } } }, { DeleteRequest: { Key: { id: '2' } } }],
         },
       });
       await subject.delete(['1', '2']);

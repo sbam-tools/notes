@@ -15,7 +15,7 @@ interface Request<TEvent = any, TResult = any, TErr = PossiblyDetailedError, TCt
   error: TErr | null;
   internal: {
     [key: string]: any;
-  }
+  };
 }
 
 class RenderValidatorErrorMiddleware implements MiddlewareObj {

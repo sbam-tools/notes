@@ -1,6 +1,6 @@
-import { container } from "tsyringe";
-import { EncryptLogic } from "./encrypt-logic";
-import { EventBridgeService } from "../services/events-service";
+import { container } from 'tsyringe';
+import { EventBridgeService } from '../services/events-service';
+import { EncryptLogic } from './encrypt-logic';
 
 describe('lambda/encryptor/EncryptLogic', () => {
   const eventsService = {
@@ -41,12 +41,14 @@ describe('lambda/encryptor/EncryptLogic', () => {
         id: generatedId.toString(),
         secret: generatedKey.toString('hex'),
       });
-      expect(messagesRepository.create).toBeCalledWith(expect.objectContaining({
-        id: generatedId.toString(),
-        encrypted: 'encrypted',
-        authTag: 'lorem',
-        expireAt: expect.any(Date),
-      }));
+      expect(messagesRepository.create).toBeCalledWith(
+        expect.objectContaining({
+          id: generatedId.toString(),
+          encrypted: 'encrypted',
+          authTag: 'lorem',
+          expireAt: expect.any(Date),
+        }),
+      );
     });
 
     it('enqueues a message encrypted event', async () => {
@@ -78,10 +80,12 @@ describe('lambda/encryptor/EncryptLogic', () => {
         expect(authTag).toEqual('lorem');
         return 'decrypted';
       });
-      expect(await subject.decrypt({
-        id: '1234',
-        secret: '736563726574',
-      })).toEqual('decrypted');
+      expect(
+        await subject.decrypt({
+          id: '1234',
+          secret: '736563726574',
+        }),
+      ).toEqual('decrypted');
     });
 
     it('enqueues a message decrypted event', async () => {
@@ -96,10 +100,12 @@ describe('lambda/encryptor/EncryptLogic', () => {
     it('ignores errors triggered by event publishing', async () => {
       encryptor.decrypt.mockReturnValue('decrypted');
       eventsService.sendMessageDecrypted.mockRejectedValue(new Error('asd'));
-      expect(await subject.decrypt({
-        id: '1234',
-        secret: '736563726574',
-      })).toEqual('decrypted');
+      expect(
+        await subject.decrypt({
+          id: '1234',
+          secret: '736563726574',
+        }),
+      ).toEqual('decrypted');
     });
   });
 });

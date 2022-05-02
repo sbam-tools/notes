@@ -1,18 +1,16 @@
 import 'reflect-metadata';
 import { container, inject, Lifecycle, registry, singleton } from 'tsyringe';
+import { Logger } from '@aws-lambda-powertools/logger';
 import { CodePipelineEvent } from 'aws-lambda';
 import { CloudfrontService } from './services/cloudfront-service';
 import { CodePipelineService } from './services/codepipeline-service';
-import { Logger } from '@aws-lambda-powertools/logger';
 
 interface CodePipelineActionConfig {
   distributionId: string;
   objectPaths: string[];
 }
 
-@registry([
-  { token: Logger, useClass: Logger, options: { lifecycle: Lifecycle.Singleton } }
-])
+@registry([{ token: Logger, useClass: Logger, options: { lifecycle: Lifecycle.Singleton } }])
 @singleton()
 export class CodePipelineAdapter {
   constructor(

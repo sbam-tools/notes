@@ -1,0 +1,19 @@
+{
+  "bracketSpacing": true,
+  "printWidth": 120,
+  "semi": true,
+  "singleQuote": true,
+  "tabWidth": 2,
+  "trailingComma": "all",
+  "useTabs": false,
+  "overrides": [
+    {
+      "files": "*.json",
+      "options": {
+        "printWidth": 200
+      }
+    }
+  ],
+  "importOrderParserPlugins": ["typescript", "classProperties", "decorators-legacy"],
+  "importOrder": ["reflect-metadata", "tsyringe", "<THIRD_PARTY_MODULES>", "^[./]"]
+}

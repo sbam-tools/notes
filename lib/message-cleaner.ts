@@ -1,12 +1,12 @@
-import { Construct } from "constructs";
-import { RemovalPolicy } from "aws-cdk-lib";
+import { RemovalPolicy } from 'aws-cdk-lib';
+import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as events from 'aws-cdk-lib/aws-events';
 import * as eventTargets from 'aws-cdk-lib/aws-events-targets';
-import * as sqs from 'aws-cdk-lib/aws-sqs';
-import * as lambdaNode from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as lambdaEventSources from 'aws-cdk-lib/aws-lambda-event-sources';
-import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
+import * as lambdaNode from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as logs from 'aws-cdk-lib/aws-logs';
+import * as sqs from 'aws-cdk-lib/aws-sqs';
+import { Construct } from 'constructs';
 
 export interface MessageCleanerProps {
   eventBus: events.IEventBus;
@@ -30,9 +30,7 @@ export class MessageCleaner extends Construct {
         source: ['sbam.notes'],
         detailType: ['message decrypted'],
       },
-      targets: [
-        new eventTargets.SqsQueue(queue),
-      ],
+      targets: [new eventTargets.SqsQueue(queue)],
     });
 
     const handler = new lambdaNode.NodejsFunction(this, 'Lambda', {

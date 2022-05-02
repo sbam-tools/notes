@@ -1,9 +1,8 @@
 #!/usr/bin/env node
-import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
-import { SbamNotesStack } from '../lib/sbam-notes-stack';
-import { RemovalPolicy } from 'aws-cdk-lib';
+import 'source-map-support/register';
 import { InputParameterType } from '../lib/input-parameter';
+import { SbamNotesStack } from '../lib/sbam-notes-stack';
 
 const app = new cdk.App();
 new SbamNotesStack(app, 'SbamNotes', {

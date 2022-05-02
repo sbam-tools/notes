@@ -1,7 +1,7 @@
+import { inject, Lifecycle, registry, singleton } from 'tsyringe';
 import { Logger } from '@aws-lambda-powertools/logger';
 import * as crypto from 'crypto';
 import { nanoid } from 'nanoid';
-import { inject, Lifecycle, registry, singleton } from 'tsyringe';
 import { IMessagesRepository } from '../repositories/interfaces';
 import { EventBridgeService } from '../services/events-service';
 import { DecryptRequest, IEncryptLogic, IEncryptor } from './interfaces';
@@ -11,9 +11,7 @@ export interface EncryptResponse {
   secret: string;
 }
 
-@registry([
-  { token: Logger, useClass: Logger, options: { lifecycle: Lifecycle.Singleton } },
-])
+@registry([{ token: Logger, useClass: Logger, options: { lifecycle: Lifecycle.Singleton } }])
 @singleton()
 export class EncryptLogic implements IEncryptLogic {
   constructor(
@@ -31,7 +29,7 @@ export class EncryptLogic implements IEncryptLogic {
     const result = this.encryptor.encrypt({
       key,
       iv: Buffer.from(id),
-      message: message
+      message: message,
     });
     await this.repository.create({
       id,
@@ -52,7 +50,7 @@ export class EncryptLogic implements IEncryptLogic {
     const decrypted = await this.encryptor.decrypt({
       key: Buffer.from(secret, 'hex'),
       iv: Buffer.from(id),
-      ...message
+      ...message,
     });
     this.logger.info('Decrypted message', { id });
     try {

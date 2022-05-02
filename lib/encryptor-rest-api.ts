@@ -1,13 +1,13 @@
-import { Construct } from "constructs";
+import { CfnOutput, Names } from 'aws-cdk-lib';
 import * as apigateway from 'aws-cdk-lib/aws-apigateway';
+import * as acm from 'aws-cdk-lib/aws-certificatemanager';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
-import * as logs from 'aws-cdk-lib/aws-logs';
 import * as events from 'aws-cdk-lib/aws-events';
 import * as lambdaNode from 'aws-cdk-lib/aws-lambda-nodejs';
+import * as logs from 'aws-cdk-lib/aws-logs';
 import * as r53 from 'aws-cdk-lib/aws-route53';
 import * as r53Targets from 'aws-cdk-lib/aws-route53-targets';
-import * as acm from 'aws-cdk-lib/aws-certificatemanager';
-import { CfnOutput, Names } from "aws-cdk-lib";
+import { Construct } from 'constructs';
 
 export interface EncryptorRestAPIDomainProps {
   hostedZone: r53.IHostedZone;
@@ -18,7 +18,7 @@ export interface EncryptorRestAPIProps {
   table: dynamodb.ITable;
   eventBus: events.IEventBus;
   logRetention?: logs.RetentionDays;
-  customDomain?: EncryptorRestAPIDomainProps
+  customDomain?: EncryptorRestAPIDomainProps;
 }
 
 export class EncryptorRestAPI extends Construct {

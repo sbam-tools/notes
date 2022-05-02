@@ -5,14 +5,14 @@ module.exports = {
       KeySchema: [
         {
           AttributeName: 'id',
-          KeyType: 'HASH'
-        }
+          KeyType: 'HASH',
+        },
       ],
       AttributeDefinitions: [
         {
           AttributeName: 'id',
-          AttributeType: 'S'
-        }
+          AttributeType: 'S',
+        },
       ],
       ProvisionedThroughput: {
         ReadCapacityUnits: 1,

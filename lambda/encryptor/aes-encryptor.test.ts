@@ -1,6 +1,6 @@
-import { container } from "tsyringe";
-import { AESEncryptor } from "./aes-encryptor";
-import { DecryptError } from "./errors";
+import { container } from 'tsyringe';
+import { AESEncryptor } from './aes-encryptor';
+import { DecryptError } from './errors';
 
 describe('lambda/encryptor/AESEncryptor', () => {
   let subject: AESEncryptor;
@@ -19,7 +19,7 @@ describe('lambda/encryptor/AESEncryptor', () => {
       };
       expect(subject.encrypt(req)).toEqual({
         encrypted: 'b12352b66d9bd9c69f0fe6',
-        authTag: '2f5a41588afc055f2f16325640729a21'
+        authTag: '2f5a41588afc055f2f16325640729a21',
       });
     });
   });
@@ -43,7 +43,7 @@ describe('lambda/encryptor/AESEncryptor', () => {
         authTag: '2f5a41588afc055f2f16325640729a21',
       };
       expect(() => {
-        subject.decrypt(req)
+        subject.decrypt(req);
       }).toThrowError(DecryptError);
     });
   });

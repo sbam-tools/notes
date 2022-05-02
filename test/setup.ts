@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import * as path from 'path';
 import { setup } from 'jest-dynalite';
+import * as path from 'path';
 
 setup(path.join(__dirname, '..'));

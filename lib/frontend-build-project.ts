@@ -24,26 +24,18 @@ export class FrontendBuildProject extends codebuild.PipelineProject {
             'runtime-versions': {
               nodejs: '14',
             },
-            commands: [
-              'npm ci'
-            ],
+            commands: ['npm ci'],
           },
           build: {
-            commands: [
-              'npm run build'
-            ],
+            commands: ['npm run build'],
           },
         },
         artifacts: {
-          files: [
-            '**/*',
-          ],
+          files: ['**/*'],
           'base-directory': 'dist',
         },
         cache: {
-          paths: [
-            'node_modules/**/*',
-          ],
+          paths: ['node_modules/**/*'],
         },
       }),
     });

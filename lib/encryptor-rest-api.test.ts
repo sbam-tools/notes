@@ -1,9 +1,9 @@
-import { CfnElement, Stack } from "aws-cdk-lib";
+import { CfnElement, Stack } from 'aws-cdk-lib';
 import { Match, Template } from 'aws-cdk-lib/assertions';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as events from 'aws-cdk-lib/aws-events';
 import { cdkTestAppFactory } from '../test/helpers';
-import { EncryptorRestAPI } from "./encryptor-rest-api";
+import { EncryptorRestAPI } from './encryptor-rest-api';
 
 describe('constructs/RestEncryptorAPI', () => {
   let stack: Stack;
@@ -37,8 +37,8 @@ describe('constructs/RestEncryptorAPI', () => {
           Variables: {
             TABLE_NAME: {
               Ref: tableLogicalId,
-            }
-          }
+            },
+          },
         },
       },
     });
@@ -52,8 +52,8 @@ describe('constructs/RestEncryptorAPI', () => {
     const template = Template.fromStack(stack);
     template.hasResource('AWS::ApiGateway::RestApi', {
       Properties: {
-        Name: Match.stringLikeRegexp('^TestStackAPI')
-      }
+        Name: Match.stringLikeRegexp('^TestStackAPI'),
+      },
     });
   });
 });

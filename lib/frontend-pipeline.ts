@@ -27,10 +27,10 @@ export class FrontendPipeline extends cp.Pipeline {
       this.artifactBucket.applyRemovalPolicy(props.removalPolicy);
     }
 
-    const repositoryParts = props.repository ? props.repository.split('/') : ['sbam-cloud', 'notes-frontend'];
+    const repositoryParts = props.repository ? props.repository.split('/') : ['sbam-tools', 'notes-frontend'];
     if (repositoryParts.length !== 2) {
       Annotations.of(this).addError(
-        'sourceRepository must be in the format <organization>/<repository> (e.g. sbam-cloud/notes-frontend)',
+        'sourceRepository must be in the format <organization>/<repository> (e.g. sbam-tools/notes-frontend)',
       );
     }
 

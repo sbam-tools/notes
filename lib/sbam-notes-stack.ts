@@ -53,6 +53,7 @@ export class SbamNotesStack extends Stack {
       codeStarConnectionArn,
       repository: props.frontend?.repository,
       branch: props.frontend?.branch,
+      customDomain,
     });
   }
 

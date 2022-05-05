@@ -1,6 +1,12 @@
 {
   "name": "sbam-notes",
-  "version": "0.1.0",
+  "description": "SBAM Notes allows to share sensitive information via self destructive links",
+  "version": "0.0.1",
+  "author": {
+    "name": "Nicola Racco",
+    "email": "nicola.racco@gmail.com",
+    "url": "https://www.github.com/nicolaracco"
+  },
   "bin": {
     "sbam-notes": "bin/sbam-notes.js"
   },

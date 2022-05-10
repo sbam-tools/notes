@@ -1,6 +1,10 @@
 # SBAM Notes
 
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate/?business=L49FJ2VK84B8L&no_recurring=0&item_name=SBAM+Notes&currency_code=EUR)
+
 SBAM (Seriously Built AWS Module) Notes is a serverless application that allows to easily share sensitive information. Use it on [https://notes.sbam.tools](https://notes.sbam.tools)!
+
+Running this platform and working on it has its costs. If you enjoy this tool, [please consider a donation](https://www.paypal.com/donate/?business=L49FJ2VK84B8L&no_recurring=0&item_name=SBAM+Notes&currency_code=EUR).
 
 
 ## How it works
@@ -24,7 +28,7 @@ Also, we find disappointing how few serverless products are released open source
 
 ## Use it on your own!
 
-If you want to use it in your own network, do it!
+If you want to use it on your own, do it!
 
 You can clone this project and customize the stack options to deploy your own frontend application.
 

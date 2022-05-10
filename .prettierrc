@@ -15,5 +15,5 @@
     }
   ],
   "importOrderParserPlugins": ["typescript", "classProperties", "decorators-legacy"],
-  "importOrder": ["reflect-metadata", "tsyringe", "<THIRD_PARTY_MODULES>", "^[./]"]
+  "importOrder": ["source-map-support/register", "reflect-metadata", "tsyringe", "constructs", "<THIRD_PARTY_MODULES>", "^[./]"]
 }

@@ -12,6 +12,7 @@
 //
 // You should have received a copy of the GNU Lesser General Public License
 // along with SBAM Notes. If not, see <http://www.gnu.org/licenses/>.
+import { Construct } from 'constructs';
 import { CfnOutput, RemovalPolicy } from 'aws-cdk-lib';
 import * as acm from 'aws-cdk-lib/aws-certificatemanager';
 import * as cf from 'aws-cdk-lib/aws-cloudfront';
@@ -20,7 +21,6 @@ import * as logs from 'aws-cdk-lib/aws-logs';
 import * as r53 from 'aws-cdk-lib/aws-route53';
 import * as r53Targets from 'aws-cdk-lib/aws-route53-targets';
 import * as s3 from 'aws-cdk-lib/aws-s3';
-import { Construct } from 'constructs';
 import { FrontendPipeline } from './frontend-pipeline';
 import { SPACloudfrontFunction } from './spa-routing-cloudfront-function';
 

@@ -12,12 +12,12 @@
 //
 // You should have received a copy of the GNU Lesser General Public License
 // along with SBAM Notes. If not, see <http://www.gnu.org/licenses/>.
+import { Construct } from 'constructs';
 import { Annotations, Duration, RemovalPolicy } from 'aws-cdk-lib';
 import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
 import * as cp from 'aws-cdk-lib/aws-codepipeline';
 import * as cpActions from 'aws-cdk-lib/aws-codepipeline-actions';
 import * as s3 from 'aws-cdk-lib/aws-s3';
-import { Construct } from 'constructs';
 import { FrontendBuildProject } from './frontend-build-project';
 import { InvalidateCloudfrontCodepipelineAction } from './invalidate-cloudfront-codepipeline-action';
 

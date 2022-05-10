@@ -12,10 +12,10 @@
 //
 // You should have received a copy of the GNU Lesser General Public License
 // along with SBAM Notes. If not, see <http://www.gnu.org/licenses/>.
+import { Construct } from 'constructs';
 import { RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
 import * as logs from 'aws-cdk-lib/aws-logs';
 import * as r53 from 'aws-cdk-lib/aws-route53';
-import { Construct } from 'constructs';
 import { Encryptor } from './encryptor';
 import { Frontend } from './frontend';
 import { InputParameter, parseInputParameter } from './input-parameter';

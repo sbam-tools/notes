@@ -12,11 +12,11 @@
 //
 // You should have received a copy of the GNU Lesser General Public License
 // along with SBAM Notes. If not, see <http://www.gnu.org/licenses/>.
+import { Construct } from 'constructs';
 import { Stack } from 'aws-cdk-lib';
 import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
 import * as cpActions from 'aws-cdk-lib/aws-codepipeline-actions';
 import * as iam from 'aws-cdk-lib/aws-iam';
-import { Construct } from 'constructs';
 import { InvalidateCloudfrontCodePipelineLambda } from './invalidate-cloudfront-lambda';
 
 export interface InvalidateCloudfrontCodepipelineActionProps {

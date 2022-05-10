@@ -13,8 +13,9 @@
 //
 // You should have received a copy of the GNU Lesser General Public License
 // along with SBAM Notes. If not, see <http://www.gnu.org/licenses/>.
-import * as cdk from 'aws-cdk-lib';
 import 'source-map-support/register';
+import * as cdk from 'aws-cdk-lib';
+import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import { InputParameterType } from '../lib/input-parameter';
 import { SbamNotesStack } from '../lib/sbam-notes-stack';
 

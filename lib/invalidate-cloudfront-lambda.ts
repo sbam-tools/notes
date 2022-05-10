@@ -12,10 +12,10 @@
 //
 // You should have received a copy of the GNU Lesser General Public License
 // along with SBAM Notes. If not, see <http://www.gnu.org/licenses/>.
+import { Construct } from 'constructs';
 import { Stack } from 'aws-cdk-lib';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as lambdaNode from 'aws-cdk-lib/aws-lambda-nodejs';
-import { Construct } from 'constructs';
 
 const INVALIDATE_CLOUDFRONT_HANDLER_ID = 'InvalidateCloudfrontCodePipelineHandler';
 

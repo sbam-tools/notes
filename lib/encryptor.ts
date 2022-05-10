@@ -12,11 +12,11 @@
 //
 // You should have received a copy of the GNU Lesser General Public License
 // along with SBAM Notes. If not, see <http://www.gnu.org/licenses/>.
+import { Construct } from 'constructs';
 import { RemovalPolicy } from 'aws-cdk-lib';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import * as events from 'aws-cdk-lib/aws-events';
 import * as logs from 'aws-cdk-lib/aws-logs';
-import { Construct } from 'constructs';
 import { EncryptorRestAPI, EncryptorRestAPIDomainProps } from './encryptor-rest-api';
 import { MessageCleaner } from './message-cleaner';
 import { MessagesDDBTable, StorageConfig } from './messages-ddb-table';
@@ -25,6 +25,7 @@ export interface EncryptorProps {
   removalPolicy?: RemovalPolicy;
   logRetention?: logs.RetentionDays;
   customDomain?: EncryptorRestAPIDomainProps;
+  storageConfig?: StorageConfig;
 }
 
 export class Encryptor extends Construct {

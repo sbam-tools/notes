@@ -6,6 +6,8 @@ SBAM (Seriously Built AWS Module) Notes is a serverless application that allows 
 
 Running this platform and working on it has its costs. If you enjoy this tool, [please consider a donation](https://www.paypal.com/donate/?business=L49FJ2VK84B8L&no_recurring=0&item_name=SBAM+Notes&currency_code=EUR).
 
+This repository contains the CDK project for the infrastructure and backend part. The frontend code is on [https://github.com/sbam-tools/notes-frontend](https://github.com/sbam-tools/notes-frontend).
+
 
 ## How it works
 
@@ -31,7 +33,6 @@ Also, we find disappointing how few serverless products are released open source
 If you want to use it on your own, do it!
 
 You can clone this project and customize the stack options to deploy your own frontend application.
-
 
 ## TODO
 

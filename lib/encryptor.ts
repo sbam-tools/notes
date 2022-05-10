@@ -19,6 +19,7 @@ import * as logs from 'aws-cdk-lib/aws-logs';
 import { Construct } from 'constructs';
 import { EncryptorRestAPI, EncryptorRestAPIDomainProps } from './encryptor-rest-api';
 import { MessageCleaner } from './message-cleaner';
+import { MessagesDDBTable, StorageConfig } from './messages-ddb-table';
 
 export interface EncryptorProps {
   removalPolicy?: RemovalPolicy;
@@ -36,12 +37,8 @@ export class Encryptor extends Construct {
 
     this.eventBus = new events.EventBus(this, 'EventBus');
 
-    this.table = new dynamodb.Table(this, 'EncryptedMessagesTable', {
-      partitionKey: {
-        name: 'id',
-        type: dynamodb.AttributeType.STRING,
-      },
-      timeToLiveAttribute: 'TTL',
+    this.table = new MessagesDDBTable(this, 'EncryptedMessagesTable', {
+      config: props?.storageConfig,
       removalPolicy: props?.removalPolicy,
     });
 

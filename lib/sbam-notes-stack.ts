@@ -19,6 +19,7 @@ import { Construct } from 'constructs';
 import { Encryptor } from './encryptor';
 import { Frontend } from './frontend';
 import { InputParameter, parseInputParameter } from './input-parameter';
+import { StorageConfig } from './messages-ddb-table';
 
 interface CustomDomainConfig {
   hostedZone: r53.IHostedZone;
@@ -42,6 +43,7 @@ export interface SbamNotesStackProps extends StackProps {
     branch?: string;
   };
   customDomain?: SbamNotesStackCustomDomainProps;
+  storageConfig?: StorageConfig;
 }
 
 export class SbamNotesStack extends Stack {
@@ -55,6 +57,7 @@ export class SbamNotesStack extends Stack {
 
     const encryptor = new Encryptor(this, 'Encryptor', {
       logRetention,
+      storageConfig: props.storageConfig,
       removalPolicy,
       customDomain,
     });

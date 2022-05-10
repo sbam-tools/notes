@@ -55,4 +55,9 @@ new SbamNotesStack(app, 'SbamNotes', {
       type: InputParameterType.PARAMETER_STORE,
     },
   },
+  storageConfig: {
+    readCapacity: 1,
+    writeCapacity: 1,
+    tableClass: dynamodb.TableClass.STANDARD_INFREQUENT_ACCESS,
+  },
 });

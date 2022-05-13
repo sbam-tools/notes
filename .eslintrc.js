@@ -23,7 +23,7 @@ module.exports = {
     'plugin:jest/recommended',
     'prettier',
   ],
-  ignorePatterns: ['*.js', '*.d.ts', 'node_modules/', '*.generated.ts'],
+  ignorePatterns: ['*.js', '*.d.ts', 'node_modules/', '*.generated.ts', 'cdk.out/'],
   rules: {
     '@typescript-eslint/no-non-null-assertion': 'off',
     'jest/expect-expect': 'off',

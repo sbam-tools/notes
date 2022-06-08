@@ -76,6 +76,26 @@ describe('lambda/encryptor/DDBMessagesRepository', () => {
     });
   });
 
+  describe('#exists', () => {
+    it('returns false if message cannot be found', async () => {
+      ddbMock.on(GetCommand).resolves({});
+      expect(await subject.exists('1234')).toEqual(false);
+    });
+
+    it('returns true if message is found', async () => {
+      ddbMock.on(GetCommand).resolves({
+        Item: {
+          PK: `m#1234`,
+          encrypted: 'foobar',
+          authTag: 'lorem',
+          id: '1234',
+          _et: 'message',
+        },
+      });
+      expect(await subject.exists('1234')).toEqual(true);
+    });
+  });
+
   describe('#delete', () => {
     it('works', async () => {
       ddbMock.onAnyCommand().rejects();

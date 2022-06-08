@@ -28,6 +28,7 @@ describe('lambda/encryptor/EncryptLogic', () => {
   const messagesRepository = {
     create: jest.fn(),
     find: jest.fn(),
+    exists: jest.fn(),
   };
 
   let subject: EncryptLogic;
@@ -120,6 +121,18 @@ describe('lambda/encryptor/EncryptLogic', () => {
           secret: '736563726574',
         }),
       ).toEqual('decrypted');
+    });
+  });
+
+  describe('#detect', () => {
+    it('returns false when no message is found', async () => {
+      messagesRepository.exists.mockResolvedValue(false);
+      expect(await subject.detect('123')).toEqual(false);
+    });
+
+    it('returns true when a message is found', async () => {
+      messagesRepository.exists.mockImplementation((id: string) => id === '123');
+      expect(await subject.detect('123')).toEqual(true);
     });
   });
 });

@@ -74,4 +74,8 @@ export class EncryptLogic implements IEncryptLogic {
     }
     return decrypted;
   }
+
+  async detect(id: string): Promise<boolean> {
+    return this.repository.exists(id);
+  }
 }

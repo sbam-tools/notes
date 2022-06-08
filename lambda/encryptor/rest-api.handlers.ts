@@ -17,6 +17,7 @@ import { container, inject, Lifecycle, registry, singleton } from 'tsyringe';
 import { Logger } from '@aws-lambda-powertools/logger';
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import createError from 'http-errors';
+import checkExistenceInputSchema from '../../schemas/encryptor/check-existence.input.schema.json';
 import decryptInputSchema from '../../schemas/encryptor/decrypt.input.schema.json';
 import encryptInputSchema from '../../schemas/encryptor/encrypt.input.schema.json';
 import { DDBMessagesRepository } from '../repositories/ddb-messages-repository';
@@ -69,6 +70,15 @@ class RestAPIHandlers {
       throw e;
     }
   }
+
+  async detect(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
+    const id = event.pathParameters!.id!;
+    const exists = await this.encryptLogic.detect(id);
+    return {
+      statusCode: exists ? 200 : 404,
+      body: '',
+    };
+  }
 }
 
 export const encryptHandler = middify(async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
@@ -78,3 +88,7 @@ export const encryptHandler = middify(async (event: APIGatewayProxyEvent): Promi
 export const decryptHandler = middify(async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   return container.resolve(RestAPIHandlers).decrypt(event);
 }, decryptInputSchema);
+
+export const checkExistenceHandler = middify(async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+  return container.resolve(RestAPIHandlers).detect(event);
+}, checkExistenceInputSchema);

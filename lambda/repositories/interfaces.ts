@@ -28,5 +28,6 @@ export interface MessageDocument {
 export interface IMessagesRepository {
   create(message: CreateMessageInput): Promise<void>;
   find(id: string): Promise<MessageDocument>;
+  exists(id: string): Promise<boolean>;
   delete(ids: string[]): Promise<void>;
 }

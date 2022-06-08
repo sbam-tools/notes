@@ -60,6 +60,19 @@ export class DDBMessagesRepository implements IMessagesRepository {
     return { encrypted, authTag };
   }
 
+  async exists(id: string): Promise<boolean> {
+    const result = await this.client.send(
+      new GetCommand({
+        TableName: this.tableName,
+        Key: {
+          id,
+        },
+        ProjectionExpression: 'id',
+      }),
+    );
+    return !!result.Item;
+  }
+
   async delete(ids: string[]): Promise<void> {
     await this.client.send(
       new BatchWriteCommand({

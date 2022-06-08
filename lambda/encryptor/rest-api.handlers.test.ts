@@ -17,12 +17,13 @@ import { APIGatewayProxyEvent, Context } from 'aws-lambda';
 import 'jest-dynalite/withDb';
 import { MessageNotFoundError, DecryptError } from './errors';
 import { IEncryptLogic } from './interfaces';
-import { encryptHandler, decryptHandler } from './rest-api.handlers';
+import { encryptHandler, decryptHandler, checkExistenceHandler } from './rest-api.handlers';
 
 describe('lambda/encryptor/rest-api.handlers', () => {
   const encryptLogic = {
     encrypt: jest.fn(),
     decrypt: jest.fn(),
+    detect: jest.fn(),
   };
 
   beforeEach(() => {
@@ -243,6 +244,54 @@ describe('lambda/encryptor/rest-api.handlers', () => {
       );
       expect(encryptResponse.statusCode).toEqual(500);
       expect(encryptResponse.body).toEqual('Internal error');
+    });
+  });
+
+  describe('/checkExistenceHandler', () => {
+    it('returns a 400 if no id is given in path', async () => {
+      const response = await checkExistenceHandler(
+        {
+          pathParameters: {},
+        } as unknown as APIGatewayProxyEvent,
+        {} as Context,
+      );
+      expect(response.statusCode).toEqual(400);
+    });
+
+    it('returns a 404 if no message is found for id', async () => {
+      encryptLogic.detect.mockImplementation((id) => {
+        if (id === '123') {
+          return false;
+        }
+        throw new Error(`EncryptLogicMock#detect called with unexpected id '${id}'`);
+      });
+      const response = await checkExistenceHandler(
+        {
+          pathParameters: {
+            id: '123',
+          },
+        } as unknown as APIGatewayProxyEvent,
+        {} as Context,
+      );
+      expect(response.statusCode).toEqual(404);
+    });
+
+    it('returns a 200 if message is found for id', async () => {
+      encryptLogic.detect.mockImplementation((id) => {
+        if (id === '123') {
+          return true;
+        }
+        throw new Error(`EncryptLogicMock#detect called with unexpected id '${id}'`);
+      });
+      const response = await checkExistenceHandler(
+        {
+          pathParameters: {
+            id: '123',
+          },
+        } as unknown as APIGatewayProxyEvent,
+        {} as Context,
+      );
+      expect(response.statusCode).toEqual(200);
     });
   });
 });

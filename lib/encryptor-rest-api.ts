@@ -38,6 +38,7 @@ export interface EncryptorRestAPIProps {
 export class EncryptorRestAPI extends Construct {
   readonly encryptHandler: lambdaNode.NodejsFunction;
   readonly decryptHandler: lambdaNode.NodejsFunction;
+  readonly checkExistenceHandler: lambdaNode.NodejsFunction;
   readonly restApi: apigateway.RestApi;
 
   constructor(scope: Construct, id: string, props: EncryptorRestAPIProps) {
@@ -67,6 +68,16 @@ export class EncryptorRestAPI extends Construct {
     props.table.grant(this.decryptHandler, 'dynamodb:GetItem');
     props.eventBus.grantPutEventsTo(this.decryptHandler);
 
+    this.checkExistenceHandler = new lambdaNode.NodejsFunction(this, 'CheckExistenceHandler', {
+      entry: 'lambda/encryptor/rest-api.handlers.ts',
+      handler: 'checkExistenceHandler',
+      logRetention: props.logRetention,
+      environment: {
+        TABLE_NAME: props.table.tableName,
+      },
+    });
+    props.table.grant(this.checkExistenceHandler, 'dynamodb:GetItem');
+
     this.restApi = new apigateway.RestApi(this, 'API', {
       description: 'SBAM Notes Encryptor API',
       restApiName: Names.uniqueId(this),
@@ -75,11 +86,14 @@ export class EncryptorRestAPI extends Construct {
       },
       defaultCorsPreflightOptions: {
         allowOrigins: apigateway.Cors.ALL_ORIGINS,
-        allowMethods: ['OPTIONS', 'POST'],
+        allowMethods: ['OPTIONS', 'POST', 'HEAD'],
       },
     });
     this.restApi.root.addMethod('POST', new apigateway.LambdaIntegration(this.encryptHandler));
-    this.restApi.root.addResource('{id}').addMethod('POST', new apigateway.LambdaIntegration(this.decryptHandler));
+
+    const messageResource = this.restApi.root.addResource('{id}');
+    messageResource.addMethod('HEAD', new apigateway.LambdaIntegration(this.checkExistenceHandler));
+    messageResource.addMethod('POST', new apigateway.LambdaIntegration(this.decryptHandler));
 
     if (props.customDomain) {
       this.addCustomDomain('Custom', props.customDomain);

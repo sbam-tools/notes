@@ -49,4 +49,5 @@ export interface IEncryptor {
 export interface IEncryptLogic {
   encrypt(message: string): Promise<EncryptResponse>;
   decrypt(request: DecryptRequest): Promise<string | undefined>;
+  detect(id: string): Promise<boolean>;
 }

@@ -91,7 +91,7 @@ describe('lambda/encryptor/rest-api.handlers', () => {
         {} as Context,
       );
       expect(encryptResponse.statusCode).toEqual(404);
-      expect(JSON.parse(encryptResponse.body).reason).toEqual('Message not found or invalid secret');
+      expect(JSON.parse(encryptResponse.body).reason).toEqual('Message not found');
     });
 
     it('returns a 404 if encryption logic raises a DecryptError', async () => {
@@ -109,8 +109,8 @@ describe('lambda/encryptor/rest-api.handlers', () => {
         } as unknown as APIGatewayProxyEvent,
         {} as Context,
       );
-      expect(encryptResponse.statusCode).toEqual(404);
-      expect(JSON.parse(encryptResponse.body).reason).toEqual('Message not found or invalid secret');
+      expect(encryptResponse.statusCode).toEqual(422);
+      expect(JSON.parse(encryptResponse.body).reason).toEqual('Invalid secret');
     });
 
     it('returns a 500 error if decryption fails for unknown reasons', async () => {

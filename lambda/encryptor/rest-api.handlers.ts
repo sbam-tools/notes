@@ -64,8 +64,10 @@ class RestAPIHandlers {
         body: JSON.stringify({ message }),
       };
     } catch (e) {
-      if (e instanceof MessageNotFoundError || e instanceof DecryptError) {
-        throw createError(404, 'Message not found or invalid secret');
+      if (e instanceof MessageNotFoundError) {
+        throw createError(404, 'Message not found');
+      } else if (e instanceof DecryptError) {
+        throw createError(422, 'Invalid secret');
       }
       throw e;
     }
@@ -74,8 +76,11 @@ class RestAPIHandlers {
   async detect(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
     const id = event.pathParameters!.id!;
     const exists = await this.encryptLogic.detect(id);
+    if (!exists) {
+      throw createError(404, 'Message not found');
+    }
     return {
-      statusCode: exists ? 200 : 404,
+      statusCode: 200,
       body: '',
     };
   }

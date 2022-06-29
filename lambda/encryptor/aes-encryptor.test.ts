@@ -60,5 +60,17 @@ describe('lambda/encryptor/AESEncryptor', () => {
         subject.decrypt(req);
       }).toThrowError(DecryptError);
     });
+
+    it('raises error if provided secret is invalid', () => {
+      const req = {
+        key: Buffer.from('c11beff4f126f80f9c827e7c', 'hex'),
+        iv: Buffer.from('lorem ipsum'),
+        encrypted: 'b12352b66d9bd9c69f0fe6',
+        authTag: '2f5a41588afc055f2f16325640729a21',
+      };
+      expect(() => {
+        subject.decrypt(req);
+      }).toThrowError(DecryptError);
+    });
   });
 });

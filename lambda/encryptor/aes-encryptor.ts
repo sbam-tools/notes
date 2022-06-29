@@ -35,7 +35,7 @@ export class AESEncryptor implements IEncryptor {
       const decrypted = decipher.update(encrypted, 'hex', 'utf8');
       return decrypted + decipher.final('utf8');
     } catch (e) {
-      if ((e as Error).message === 'Unsupported state or unable to authenticate data') {
+      if (['Unsupported state or unable to authenticate data', 'Invalid key length'].includes((e as Error).message)) {
         throw new DecryptError();
       }
       throw e;

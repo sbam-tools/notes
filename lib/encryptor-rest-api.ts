@@ -74,6 +74,7 @@ export class EncryptorRestAPI extends Construct {
       logRetention: props.logRetention,
       environment: {
         TABLE_NAME: props.table.tableName,
+        EVENT_BUS_NAME: props.eventBus.eventBusName,
       },
     });
     props.table.grant(this.checkExistenceHandler, 'dynamodb:GetItem');

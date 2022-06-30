@@ -21,11 +21,17 @@ import { EncryptorRestAPI, EncryptorRestAPIDomainProps } from './encryptor-rest-
 import { MessageCleaner } from './message-cleaner';
 import { MessagesDDBTable, StorageConfig } from './messages-ddb-table';
 
+export interface EncryptorAPIConfigProps {
+  throttlingBurstLimit?: number;
+  throttlingRateLimit?: number;
+}
+
 export interface EncryptorProps {
   removalPolicy?: RemovalPolicy;
   logRetention?: logs.RetentionDays;
   customDomain?: EncryptorRestAPIDomainProps;
   storageConfig?: StorageConfig;
+  apiConfig?: EncryptorAPIConfigProps;
 }
 
 export class Encryptor extends Construct {
@@ -55,6 +61,7 @@ export class Encryptor extends Construct {
       eventBus: this.eventBus,
       logRetention: props?.logRetention,
       customDomain: props?.customDomain,
+      ...props?.apiConfig,
     });
   }
 

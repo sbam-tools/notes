@@ -16,7 +16,7 @@ import { Construct } from 'constructs';
 import { RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
 import * as logs from 'aws-cdk-lib/aws-logs';
 import * as r53 from 'aws-cdk-lib/aws-route53';
-import { Encryptor } from './encryptor';
+import { Encryptor, EncryptorAPIConfigProps } from './encryptor';
 import { Frontend } from './frontend';
 import { InputParameter, parseInputParameter } from './input-parameter';
 import { StorageConfig } from './messages-ddb-table';
@@ -44,6 +44,7 @@ export interface SbamNotesStackProps extends StackProps {
   };
   customDomain?: SbamNotesStackCustomDomainProps;
   storageConfig?: StorageConfig;
+  apiConfig?: EncryptorAPIConfigProps;
 }
 
 export class SbamNotesStack extends Stack {
@@ -60,6 +61,7 @@ export class SbamNotesStack extends Stack {
       storageConfig: props.storageConfig,
       removalPolicy,
       customDomain,
+      apiConfig: props.apiConfig,
     });
     new Frontend(this, 'Frontend', {
       logRetention,

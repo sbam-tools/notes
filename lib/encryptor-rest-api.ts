@@ -33,6 +33,8 @@ export interface EncryptorRestAPIProps {
   eventBus: events.IEventBus;
   logRetention?: logs.RetentionDays;
   customDomain?: EncryptorRestAPIDomainProps;
+  throttlingBurstLimit?: number;
+  throttlingRateLimit?: number;
 }
 
 export class EncryptorRestAPI extends Construct {
@@ -84,6 +86,8 @@ export class EncryptorRestAPI extends Construct {
       restApiName: Names.uniqueId(this),
       deployOptions: {
         stageName: 'api',
+        throttlingBurstLimit: props.throttlingBurstLimit,
+        throttlingRateLimit: props.throttlingRateLimit,
       },
       defaultCorsPreflightOptions: {
         allowOrigins: apigateway.Cors.ALL_ORIGINS,
